@@ -1,0 +1,1 @@
+["sbt.Task[scala.collection.immutable.Map[java.lang.String, scala.collection.Seq[scala.Tuple2[java.nio.file.Path, sbt.nio.FileStamp]]]]",{"2.12.7":{"hashes":[["/home/ec2-user/workingDirectory/myProjects/Mysql-Spark/src/main/scala/AccessingMysqlFromSpark.scala","25b6f73653f27f9c1673de126f1acbfcdb392094"]],"lastModifiedTimes":[]}}]

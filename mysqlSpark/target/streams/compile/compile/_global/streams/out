@@ -1,0 +1,4 @@
+[0m[[0m[31merror[0m] [0m[0m/home/ec2-user/workingDirectory/myProjects/Mysql-Spark/src/main/scala/AccessingMysqlFromSpark.scala:24:38: Unable to find encoder for type CustomerSchema. An implicit Encoder[CustomerSchema] is needed to store CustomerSchema instances in a Dataset. Primitive types (Int, String, etc) and Product types (case classes) are supported by importing spark.implicits._  Support for serializing other types will be added in future releases.[0m
+[0m[[0m[31merror[0m] [0m[0mval customersDS = mysqlCustomersDF.as[CustomerSchema][0m
+[0m[[0m[31merror[0m] [0m[0m                                     ^[0m
+[0m[[0m[31merror[0m] [0m[0mone error found[0m
