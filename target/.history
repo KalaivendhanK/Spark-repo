@@ -1,9 +1,0 @@
-reload
-compile
-project mysqlSpark
-projects
-project mysqlSpark
-project scalaProgramming
-compile
-package
-exit

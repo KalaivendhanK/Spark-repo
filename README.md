@@ -1,1 +1,1 @@
-# Spark-repo
+# Repo to work with spark applications
