@@ -8,3 +8,7 @@ compile
 package
 exit
 project scalaProgramming
+projects scala
+project scala
+compile
+project scalaProgramming
