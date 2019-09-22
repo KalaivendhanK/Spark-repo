@@ -30,17 +30,17 @@ lazy val commonSettings = Seq(
 )
 
 lazy val root = (project in file(".")).
-                aggregate(ScalaProgramming,mysqlSpark)
+                aggregate(scalaProgramming,mysqlSpark)
                 .settings(
                     aggregate in update := false
                 )
 
-lazy val ScalaProgramming = (project in file("ScalaProgramming")).
+lazy val scalaProgramming = (project in file("scalaProgramming")).
                             settings(
                                 commonSettings: _*
                             ).
                             settings(
-                                name := "ScalaProgramming"
+                                name := "scalaProgramming"
                             ).
 			    settings(
 				 assemblyMergeStrategy in assembly :=  {

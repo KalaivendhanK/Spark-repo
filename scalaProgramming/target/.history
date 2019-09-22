@@ -1,0 +1,6 @@
+compile
+test
+tests
+package
+project mysqlSpark
+assembly

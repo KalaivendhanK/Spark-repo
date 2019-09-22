@@ -24,3 +24,8 @@ reload
 plugins
 package
 project ScalaProgramming
+compile
+package
+assemble
+assembly
+project scalaProgramming
