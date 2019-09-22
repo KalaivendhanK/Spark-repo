@@ -4,3 +4,6 @@ tests
 package
 project mysqlSpark
 assembly
+compile
+package
+exit
