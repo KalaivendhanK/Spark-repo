@@ -1,4 +1,5 @@
 package com.home.collections
+// comment in test-branch
 
 trait FunctionSet extends (String => Boolean) {
   def add(input: String): FunctionSet = elem =>
