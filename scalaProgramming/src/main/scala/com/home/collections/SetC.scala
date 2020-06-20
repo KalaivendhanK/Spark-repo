@@ -1,5 +1,5 @@
 package com.home.collections
-
+// comment 
 trait SetC extends (String => Boolean) {
   def add(input: String): SetC
 
