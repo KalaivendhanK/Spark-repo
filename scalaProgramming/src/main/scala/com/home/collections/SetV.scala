@@ -1,5 +1,5 @@
 package com.home.collections
-
+// added comment
 trait SetV[+B] /*extends (B => Boolean)*/ {
 
   final /*override*/ def apply[S >: B](input: S): Boolean =
