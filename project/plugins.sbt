@@ -6,3 +6,9 @@ addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.8.3")
 
 //Plugin to create test reports .
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.6.0")
+
+//Plugin to integrate with scala.js
+addSbtPlugin("org.scala-js" % "sbt-scalajs" % "1.0.1")
+
+//Plugin to support the cats library
+addSbtPlugin("org.lyranthe.sbt" % "partial-unification" % "1.1.2")
