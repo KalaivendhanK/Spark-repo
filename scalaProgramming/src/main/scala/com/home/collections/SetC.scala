@@ -1,5 +1,5 @@
 package com.home.collections
-// comment 
+
 trait SetC extends (String => Boolean) {
   def add(input: String): SetC
 
@@ -28,7 +28,7 @@ object SetC {
     * Class definition for Empty type Set
     * @type Empty
     */
-  final case object Empty extends SetC {
+  case object Empty extends SetC {
     override def apply(input: String): Boolean =
       false
 
@@ -55,7 +55,7 @@ object SetC {
     * Class definition for NonEmpty type Sets
     * @type NonEmpty
     */
-  final /*private[this]*/ case class NonEmpty(element: String, otherElements: SetC) extends SetC {
+  /*private[this]*/ case class NonEmpty(element: String, otherElements: SetC) extends SetC {
     override def apply(input: String): Boolean =
       input == element || otherElements(input)
 
