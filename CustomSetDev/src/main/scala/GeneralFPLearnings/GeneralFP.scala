@@ -1,5 +1,0 @@
-package GeneralFPLearnings
-
-object GeneralFP {
-
-}

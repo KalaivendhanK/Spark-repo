@@ -83,7 +83,7 @@ Project 3. CustomSetDev
 This project has my personal learings on various Funcitonal programming concepts like
 monads, monoids, Functors , Programming style using Tagless Final, etc.
  */
-lazy val customSetDev = (project in file("CustomSetDev")).
+lazy val FPConcepts = (project in file("FPConcepts")).
   disablePlugins(sbtassembly.AssemblyPlugin).
   settings(
     Seq(
