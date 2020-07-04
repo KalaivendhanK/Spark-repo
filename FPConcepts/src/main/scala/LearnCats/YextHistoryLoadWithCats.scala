@@ -3,8 +3,12 @@ package LearnCats
 import simulacrum._
 import cats.{ Semigroup, Monad }
 import cats.implicits._
+import spray.json._
+import java.io.{File ,PrintWriter}
+import java.util.Calendar
+import java.text.SimpleDateFormat
 
-object YextHistoryLoadWithCats {
+object YextHistoryLoadWithCats extends App {
   @typeclass trait Monad[F[_]] {
     def lift[A](a: A): F[A]
     @op("<->") def map[A, B](fa: F[A])(f: A => B): F[B]
@@ -40,9 +44,32 @@ object YextHistoryLoadWithCats {
   }
 
   def main: Unit = {
+    val getTodayDate  = {
+      val now = Calendar.getInstance().getTime()
+      val dateFormatter = new SimpleDateFormat("yyyyMMdd")
+      dateFormatter.format(now)
+    }
     val yextEndpoint = "https://liveapi.yext.com/v2/accounts/me/entities?api_key=dbaf2f4bfa0b0e2da6417ed815706ae5&v=20200601&&limit=1&offset=1&entityTypes=location"
+    def get(url: String) = scala.io.Source.fromURL(url).mkString
+    val parsedData: JsValue = get(yextEndpoint).parseJson
+    val count = parsedData.asJsObject.getFields("response").head.asJsObject.getFields("count").head.toString().toInt
+    println(s"count = ${count}")
+    val limit = 50
+    var offset = 1
+    var i = 0
+    while (offset < count) {
+      val url = s"https://liveapi.yext.com/v2/accounts/me/entities?api_key=dbaf2f4bfa0b0e2da6417ed815706ae5&v=${getTodayDate}&&limit=${limit}&offset=${offset}&entityTypes=location"
+      val fileName = s"yext-history-${getTodayDate}-part-${i}"
+      val filePath = s"C:\\Users\\kkalya622\\Documents\\temporary_workspace"
+      val writer = new PrintWriter(new File(s"${filePath}\\${fileName}"))
+      writer.write(get(url))
+      println(s"Done writing into the file ${fileName}")
+      writer.close()
+      offset += limit
+      i += 1
+    }
 
   }
-//  Semigroup[Int].combine(1, 2)
-
+  //  Semigroup[Int].combine(1, 2)
+  main
 }

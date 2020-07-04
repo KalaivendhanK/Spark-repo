@@ -103,6 +103,7 @@ lazy val FPConcepts = (project in file("FPConcepts")).
         "org.typelevel" %% "cats-core" % "2.1.1",
         "org.typelevel" %% "simulacrum" % "1.0.0",
         "org.scalamacros" %% "resetallattrs" % "1.0.0",
+        "io.spray" %% "spray-json" % "1.3.5",
         specs2Core,
         specs2Scalacheck,
         scalacheck
