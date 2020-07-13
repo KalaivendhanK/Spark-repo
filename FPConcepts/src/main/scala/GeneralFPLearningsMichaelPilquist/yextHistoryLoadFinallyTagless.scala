@@ -277,40 +277,40 @@ object YextTimetrade extends App {
     }
   }
 
-  def doLoop1[F[_]: ExternalCapability: ChainCapability](
-    filePath: String,
-    totalCount: BigInt): F[Unit] = {
-    //    val todayDate = java.time.LocalDate.now
-    val dateFmt = lift[F, String]("yyyyMMdd")
-    val dateFormat = "yyyyMMdd"
-    for {
-      todayDate <- todayDate(dateFormat) match {
-        case Some(date) => lift[F, String](date)
-        case None => point[F, Unit]
-        case _ => point[F, Unit]
-      }
-      offset = 1
-      _ <- lift(offset)
-    } yield ()
-    val limit = 50
-    var offset = 1
-    var index = 0
-    while (offset <= totalCount) {
-      val incUrl =
-        s"""https://liveapi.yext.com/v2/accounts/me/locations?api_key=dbaf2f4bfa0b0e2da6417ed815706ae5&v=${todayDate}&&limit=${limit}&offset=${offset}"""
-      val fileName = s"""${filePath}yext-history-${todayDate}-part-${index}"""
-      val res: F[Unit] = for {
-        _ <- printString(s"Executing the url string ${incUrl}")
-        data <- readFromAPIAsString(incUrl)
-        //        _ <- printString(data)
-        _ <- writeToFile(data, fileName)
-        _ <- printString(s"Successfully written to the file ${fileName}")
-      } yield ()
-      res.eval
-      offset += limit
-      index += 1
-    }
-  }
+//  def doLoop1[F[_]: ExternalCapability: ChainCapability](
+//    filePath: String,
+//    totalCount: BigInt): F[Unit] = {
+//    //    val todayDate = java.time.LocalDate.now
+//    val dateFmt = lift[F, String]("yyyyMMdd")
+//    val dateFormat = "yyyyMMdd"
+//    for {
+//      todayDate <- todayDate(dateFormat) match {
+//        case Some(date) => lift[F, String](date)
+//        case None => point[F, Unit]
+//        case _ => point[F, Unit]
+//      }
+//      offset = 1
+//      _ <- lift(offset)
+//    } yield ()
+//    val limit = 50
+//    var offset = 1
+//    var index = 0
+//    while (offset <= totalCount) {
+//      val incUrl =
+//        s"""https://liveapi.yext.com/v2/accounts/me/locations?api_key=dbaf2f4bfa0b0e2da6417ed815706ae5&v=${todayDate}&&limit=${limit}&offset=${offset}"""
+//      val fileName = s"""${filePath}yext-history-${todayDate}-part-${index}"""
+//      val res: F[Unit] = for {
+//        _ <- printString(s"Executing the url string ${incUrl}")
+//        data <- readFromAPIAsString(incUrl)
+//        //        _ <- printString(data)
+//        _ <- writeToFile(data, fileName)
+//        _ <- printString(s"Successfully written to the file ${fileName}")
+//      } yield ()
+//      res.eval
+//      offset += limit
+//      index += 1
+//    }
+//  }
 
   def writeToFile[F[_]: ChainCapability: ExternalCapability](
     //      records: YextRecords[F],

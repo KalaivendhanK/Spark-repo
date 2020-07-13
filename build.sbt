@@ -99,14 +99,20 @@ lazy val FPConcepts = (project in file("FPConcepts")).
       scalaVersion := "2.12.11",
       name := "FPConcepts",
       libraryDependencies ++= Seq(
+        //Libraries specific to cats
         "org.scalatest" % "scalatest_2.12" % "3.2.0-SNAP10",
         "org.typelevel" %% "cats-core" % "2.1.1",
         "org.typelevel" %% "simulacrum" % "1.0.0",
         "org.scalamacros" %% "resetallattrs" % "1.0.0",
+        //Libraries for parsing json and working with https requests
         "io.spray" %% "spray-json" % "1.3.5",
+        "net.liftweb" %% "lift-json" % "3.4.1",
+        "org.scalaj" %% "scalaj-http" % "2.3.0",
         specs2Core,
         specs2Scalacheck,
-        scalacheck
+        scalacheck,
+        // ZIO Specific libraries
+        "dev.zio" %% "zio" % "1.0.0-RC16"
       ),
       scalacOptions := commonScalacOptions,
       addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full),
