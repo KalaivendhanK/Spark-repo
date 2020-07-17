@@ -1,6 +1,6 @@
 package LearnCats
 
-import simulacrum._
+import simulacrum.{typeclass, _}
 import cats.{Monad, Semigroup}
 import cats.implicits._
 import spray.json._
@@ -23,6 +23,30 @@ object YextHistoryLoadWithCats extends App {
 //      }
   def lift[F[_],A](a: => A)(implicit M: Monad[F]): F[A] = M.lift(a)
 
+  trait ApiRequests[F[_]] {
+    def getAsString(url: String): F[String]
+    def getRequests(url: String):F[JsValue]
+    def getCountField(parsedData: JsValue): F[Int]
+  }
+  def getAsString[F[_]](url: String)(implicit F: ApiRequests[F]): F[String] = F.getAsString(url)
+  def getRequests[F[_]](url: String)(implicit F: ApiRequests[F]): F[JsValue] = F.getRequests(url)
+  def getCountField[F[_]](parsedData: JsValue)(implicit F: ApiRequests[F]): F[Int] = F.getCountField(parsedData)
+
+  trait ExternalInteractions[F[_]]{
+    def writeData(location: String)(url: String): F[Unit]
+    def printToConsole(str: String): F[Unit]
+    def readFromConsole: F[String]
+  }
+  def writeData[F[_]](location: String)(url: String)(implicit F: ExternalInteractions[F]): F[Unit] = F.writeData(location)(url)
+  def printToConsole[F[_]](str: String)(implicit F: ExternalInteractions[F]): F[Unit] = F.printToConsole(str)
+  def readFromConsole[F[_]](implicit F: ExternalInteractions[F]): F[String] = F.readFromConsole
+
+  import Monad.ops._
+
+  //  implicit class combinatorForKindOneTypes[F[_],A ](fa: F[A]){
+  //    def map[B](f: A => B)(implicit C: Monad[F]) = C.map(fa)(f)
+  //    def flatMap[B](f:A => F[B])(implicit C: Monad[F]): F[B] = C.flatMap(fa)(f)
+  //  }
 //  IO Case class to capture the effects
   case class IO[A](run: () => A)
 
@@ -45,7 +69,7 @@ object YextHistoryLoadWithCats extends App {
         filePath <- lift(s"C:\\Users\\kkalya622\\Documents\\temporary_workspace")
         writer = new PrintWriter(new File(s"${filePath}\\${location}"))
         data <- getAsString(url)
-        _  = writer.write(data)
+      _  = writer.write(data)
         _ <- printToConsole(s"Done writing into the file ${location}")
         _ = writer.close()
       } yield ()
@@ -54,29 +78,6 @@ object YextHistoryLoadWithCats extends App {
     }
   }
 
-  @typeclass trait ApiRequests[F[_]] {
-      def getAsString(url: String): F[String]
-      def getRequests(url: String):F[JsValue]
-      def getCountField(parsedData: JsValue): F[Int]
-  }
-  def getAsString[F[_]](url: String)(implicit F: ApiRequests[F]): F[String] = F.getAsString(url)
-  def getRequests[F[_]](url: String)(implicit F: ApiRequests[F]): F[JsValue] = F.getRequests(url)
-  def getCountField[F[_]](parsedData: JsValue)(implicit F: ApiRequests[F]): F[Int] = F.getCountField(parsedData)
-
-
-  @typeclass trait ExternalInteractions[F[_]]{
-    def writeData(location: String)(url: String): F[Unit]
-    def printToConsole(str: String): F[Unit]
-    def readFromConsole: F[String]
-  }
-  def writeData[F[_]](location: String)(url: String)(implicit F: ExternalInteractions[F]): F[Unit] = F.writeData(location)(url)
-  def printToConsole[F[_]](str: String)(implicit F: ExternalInteractions[F]): F[Unit] = F.printToConsole(str)
-  def readFromConsole[F[_]](implicit F: ExternalInteractions[F]): F[String] = F.readFromConsole
-
-  implicit class combinatorForKindOneTypes[F[_],A ](fa: F[A]){
-    def map[B](f: A => B)(implicit C: Monad[F]) = C.map(fa)(f)
-    def flatMap[B](f:A => F[B])(implicit C: Monad[F]): F[B] = C.flatMap(fa)(f)
-  }
 
   val getTodayDate  = {
     val now = Calendar.getInstance().getTime()
@@ -84,11 +85,14 @@ object YextHistoryLoadWithCats extends App {
     dateFormatter.format(now)
   }
 
-  def loop[F[_]: Monad: ExternalInteractions](url: String)(fileCount: Int): F[Unit] = for {
-    fileName <- lift(s"yext-history-${getTodayDate}-part-${fileCount}")
-    _ <- lift(println(s"${fileName}"))
-    _ <- writeData(fileName)(url)
-  } yield ()
+  def loop[F[_]: Monad: ExternalInteractions](url: String)(fileCount: Int): F[Unit] = {
+    for {
+      fileName <- lift(s"yext-history-${getTodayDate}-part-${fileCount}")
+      _ <- lift(println(s"${fileName}"))
+          _ <- writeData(fileName)(url)
+//      _ <- fileName.writeData(url)
+    } yield ()
+  }
 
   def getDataRecursively[F[_]: Monad: ExternalInteractions](url: String)(count: Int, offset: Int, fileCount: Int): F[Unit] ={
     for {
