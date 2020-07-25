@@ -1,10 +1,10 @@
 package LearnCats
 
-import simulacrum.{typeclass, _}
-import cats.{Monad, Semigroup}
+import simulacrum.{ typeclass, _ }
+import cats.{ Monad, Semigroup }
 import cats.implicits._
 import spray.json._
-import java.io.{File, PrintWriter}
+import java.io.{ File, PrintWriter }
 import java.util.Calendar
 import java.text.SimpleDateFormat
 
@@ -13,26 +13,26 @@ import LearnCats.YextHistoryLoadWithCats.loop
 object YextHistoryLoadWithCats extends App {
   @typeclass trait Monad[F[_]] {
     def lift[A](a: A): F[A]
-   /* @op("<->") */def map[A, B](fa: F[A])(f: A => B): F[B]
-   /* @op("<<->>") */def flatMap[A, B](fa: F[A])(f: A => F[B]): F[B]
+    /* @op("<->") */ def map[A, B](fa: F[A])(f: A => B): F[B]
+    /* @op("<<->>") */ def flatMap[A, B](fa: F[A])(f: A => F[B]): F[B]
   }
-//      implicit class ExtensionForIOMOnads[A](ioa: IO[A]){
-//        def lift(a: A)(implicit IOM: Monad[IO]): IO[A] = IOM.lift(a)
-//        def map[B](f: A => B)(implicit IOM: Monad[IO]):IO[B] = IOM.map(ioa)(f)
-//        def flatMap[B](f: A => IO[B])(implicit  IOM: Monad[IO]): IO[B] = IOM.flatMap(ioa)(f)
-//      }
-  def lift[F[_],A](a: => A)(implicit M: Monad[F]): F[A] = M.lift(a)
+  //      implicit class ExtensionForIOMOnads[A](ioa: IO[A]){
+  //        def lift(a: A)(implicit IOM: Monad[IO]): IO[A] = IOM.lift(a)
+  //        def map[B](f: A => B)(implicit IOM: Monad[IO]):IO[B] = IOM.map(ioa)(f)
+  //        def flatMap[B](f: A => IO[B])(implicit  IOM: Monad[IO]): IO[B] = IOM.flatMap(ioa)(f)
+  //      }
+  def lift[F[_], A](a: => A)(implicit M: Monad[F]): F[A] = M.lift(a)
 
   trait ApiRequests[F[_]] {
     def getAsString(url: String): F[String]
-    def getRequests(url: String):F[JsValue]
+    def getRequests(url: String): F[JsValue]
     def getCountField(parsedData: JsValue): F[Int]
   }
   def getAsString[F[_]](url: String)(implicit F: ApiRequests[F]): F[String] = F.getAsString(url)
   def getRequests[F[_]](url: String)(implicit F: ApiRequests[F]): F[JsValue] = F.getRequests(url)
   def getCountField[F[_]](parsedData: JsValue)(implicit F: ApiRequests[F]): F[Int] = F.getCountField(parsedData)
 
-  trait ExternalInteractions[F[_]]{
+  trait ExternalInteractions[F[_]] {
     def writeData(location: String)(url: String): F[Unit]
     def printToConsole(str: String): F[Unit]
     def readFromConsole: F[String]
@@ -47,10 +47,10 @@ object YextHistoryLoadWithCats extends App {
   //    def map[B](f: A => B)(implicit C: Monad[F]) = C.map(fa)(f)
   //    def flatMap[B](f:A => F[B])(implicit C: Monad[F]): F[B] = C.flatMap(fa)(f)
   //  }
-//  IO Case class to capture the effects
+  //  IO Case class to capture the effects
   case class IO[A](run: () => A)
 
-//   IO Instances for Monad and ApiRequests Type classes
+  //   IO Instances for Monad and ApiRequests Type classes
   object IO {
     implicit val monadForIO: Monad[IO] = new Monad[IO] {
       override def lift[A](a: A): IO[A] = IO(() => a)
@@ -60,8 +60,8 @@ object YextHistoryLoadWithCats extends App {
         IO(() => f(fa.run()).run())
     }
     implicit def instanceForApiRequests: ApiRequests[IO] = new ApiRequests[IO] {
-      override def getAsString(url: String): IO[String] = IO(() =>scala.io.Source.fromURL(url).mkString)
-      override def getRequests(url: String): IO[JsValue] = IO(() =>(scala.io.Source.fromURL(url).mkString).parseJson)
+      override def getAsString(url: String): IO[String] = IO(() => scala.io.Source.fromURL(url).mkString)
+      override def getRequests(url: String): IO[JsValue] = IO(() => (scala.io.Source.fromURL(url).mkString).parseJson)
       override def getCountField(parsedData: JsValue): IO[Int] = IO(() => parsedData.asJsObject.getFields("response").head.asJsObject.getFields("count").head.toString().toInt)
     }
     implicit def instanceForExternalInteractions: ExternalInteractions[IO] = new ExternalInteractions[IO] {
@@ -69,7 +69,7 @@ object YextHistoryLoadWithCats extends App {
         filePath <- lift(s"C:\\Users\\kkalya622\\Documents\\temporary_workspace")
         writer = new PrintWriter(new File(s"${filePath}\\${location}"))
         data <- getAsString(url)
-      _  = writer.write(data)
+        _ = writer.write(data)
         _ <- printToConsole(s"Done writing into the file ${location}")
         _ = writer.close()
       } yield ()
@@ -78,8 +78,7 @@ object YextHistoryLoadWithCats extends App {
     }
   }
 
-
-  val getTodayDate  = {
+  val getTodayDate = {
     val now = Calendar.getInstance().getTime()
     val dateFormatter = new SimpleDateFormat("yyyyMMdd")
     dateFormatter.format(now)
@@ -89,21 +88,21 @@ object YextHistoryLoadWithCats extends App {
     for {
       fileName <- lift(s"yext-history-${getTodayDate}-part-${fileCount}")
       _ <- lift(println(s"${fileName}"))
-          _ <- writeData(fileName)(url)
-//      _ <- fileName.writeData(url)
+      _ <- writeData(fileName)(url)
+      //      _ <- fileName.writeData(url)
     } yield ()
   }
 
-  def getDataRecursively[F[_]: Monad: ExternalInteractions](url: String)(count: Int, offset: Int, fileCount: Int): F[Unit] ={
+  def getDataRecursively[F[_]: Monad: ExternalInteractions](url: String)(count: Int, offset: Int, fileCount: Int): F[Unit] = {
     for {
       limit <- lift(50)
       _ <- if (offset > count) lift(())
-          else
-            for {
-              url <- lift(s"https://liveapi.yext.com/v2/accounts/me/entities?api_key=dbaf2f4bfa0b0e2da6417ed815706ae5&v=${getTodayDate}&&limit=${limit}&offset=${offset}&entityTypes=location")
-             _ <- loop[F](url)(fileCount)
-             _ <- getDataRecursively(url)(count, offset + limit, fileCount + 1)
-            } yield ()
+      else
+        for {
+          url <- lift(s"https://liveapi.yext.com/v2/accounts/me/entities?api_key=dbaf2f4bfa0b0e2da6417ed815706ae5&v=${getTodayDate}&&limit=${limit}&offset=${offset}&entityTypes=location")
+          _ <- loop[F](url)(fileCount)
+          _ <- getDataRecursively(url)(count, offset + limit, fileCount + 1)
+        } yield ()
     } yield ()
   }
 
@@ -114,7 +113,7 @@ object YextHistoryLoadWithCats extends App {
     parsedData <- getRequests(urlToFetchTotalCounts)
     count <- getCountField(parsedData)
     _ <- getDataRecursively("")(count, offset, 0)
-    } yield ()
+  } yield ()
 
   val safeMain = requestAndParse[IO]
   safeMain.run()
@@ -122,13 +121,13 @@ object YextHistoryLoadWithCats extends App {
   // Imperitive implementation of the yext history process
   //  unSafemain
   def unSafemain: Unit = {
-    val getTodayDate  = {
+    val getTodayDate = {
       val now = Calendar.getInstance().getTime()
       val dateFormatter = new SimpleDateFormat("yyyyMMdd")
       dateFormatter.format(now)
     }
     val yextEndpoint = "https://liveapi.yext.com/v2/accounts/me/entities?api_key=dbaf2f4bfa0b0e2da6417ed815706ae5&v=20200601&&limit=1&offset=1&entityTypes=location"
-    def get(url: String):String = scala.io.Source.fromURL(url).mkString
+    def get(url: String): String = scala.io.Source.fromURL(url).mkString
     val parsedData: JsValue = get(yextEndpoint).parseJson
     val count = parsedData.asJsObject.getFields("response").head.asJsObject.getFields("count").head.toString().toInt
     println(s"count = ${count}")
