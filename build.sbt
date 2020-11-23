@@ -146,3 +146,28 @@ lazy val AWSProjects = (project in file("AWSProjects")).
           case x => MergeStrategy.first
         }
       )
+
+/*
+Project 5. Dotty Project
+This project has the sample test programms to check the DOtty conpailer capabilities and soon to be scala 3
+*/
+
+/*
+val dottyVersion = "3.0.0-M1"
+val scala213Version = "2.13.1"
+
+lazy val dotty = project
+  .in(file("dottycross-scalaprogramming"))
+  .settings(
+    name := "dotty-cross",
+    version := "0.1.0",
+
+    libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test",
+
+    // To make the default compiler and REPL use Dotty
+    scalaVersion := dottyVersion,
+
+    // To cross compile with Dotty and Scala 2
+    crossScalaVersions := Seq(dottyVersion, scala213Version)
+  )
+*/
