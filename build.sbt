@@ -53,10 +53,9 @@ lazy val scalaProgramming = (project in file("scalaProgramming")).
     commonSettings: _*
   ).
   settings(
-    name := "scalaProgramming"
-  ).
-  settings(
-    assemblyMergeStrategy in assembly := {
+    initialCommands in console := "import com.home.collections._"
+    ,name := "scalaProgramming"
+    ,assemblyMergeStrategy in assembly := {
       case PathList("META-INF", xs@_*) => MergeStrategy.discard
       case x => MergeStrategy.first
     }
@@ -94,7 +93,6 @@ val scalacheck = "org.scalacheck" %% "scalacheck" % "1.12.4"
 lazy val FPConcepts = (project in file("FPConcepts")).
   disablePlugins(sbtassembly.AssemblyPlugin).
   settings(
-    Seq(
       organization := "com.home.projects",
       scalaVersion := "2.12.11",
       name := "FPConcepts",
@@ -108,6 +106,7 @@ lazy val FPConcepts = (project in file("FPConcepts")).
         "io.spray" %% "spray-json" % "1.3.5",
         "net.liftweb" %% "lift-json" % "3.4.1",
         "org.scalaj" %% "scalaj-http" % "2.3.0",
+        "com.lihaoyi" %% "upickle" % "0.7.1",
         specs2Core,
         specs2Scalacheck,
         scalacheck,
@@ -117,8 +116,33 @@ lazy val FPConcepts = (project in file("FPConcepts")).
       scalacOptions := commonScalacOptions,
       addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full),
       addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.4")
-    )
   )
 
 addCommandAlias("cd", "project")
 addCommandAlias("ll", "projects")
+addCommandAlias("cc", "console")
+
+/*
+Project 4. AWSProjects
+This project has the programs related to the working on the services in AWS such as
+Lambda, Glue, etc using Scala and Funcitonal Programming Style.
+*/
+lazy val AWSProjects = (project in file("AWSProjects")).
+//  disablePlugins(sbtassembly.AssemblyPlugin).
+  settings(
+      organization := "com.home.projects",
+      version := "1.0",
+      scalaVersion := "2.12.11",
+      retrieveManaged := true,
+      libraryDependencies ++= Seq(
+      "com.amazonaws" % "aws-lambda-java-core" % "1.0.0",
+      "com.amazonaws" % "aws-lambda-java-events" % "1.0.0",
+      "com.amazonaws" % "aws-java-sdk-s3" % "1.11.179"
+      ),
+      javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint"),
+      assemblyMergeStrategy  in assembly :=
+        {
+          case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+          case x => MergeStrategy.first
+        }
+      )
