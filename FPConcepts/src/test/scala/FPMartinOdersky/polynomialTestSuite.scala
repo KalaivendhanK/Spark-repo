@@ -1,6 +1,6 @@
-package functionalProgrammingInScalaMartinOdersky
+package FPMartinOdersky
 
-import functionalProgrammingInScalaMartinOdersky.Polynomial._
+import FPMartinOdersky.Polynomial._
 import org.scalatest._
 
 class polynomialTestSuite extends FunSuite with Matchers {

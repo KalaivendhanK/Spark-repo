@@ -1,4 +1,4 @@
-package functionalProgrammingInScalaMartinOdersky
+package FPMartinOdersky
 object mergedSort extends App {
 
   def msort[T](x1: List[T])(predicate: (T, T) => Boolean): List[T] = {

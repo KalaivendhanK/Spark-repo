@@ -111,7 +111,7 @@ lazy val FPConcepts = (project in file("FPConcepts")).
         specs2Scalacheck,
         scalacheck,
         // ZIO Specific libraries
-        "dev.zio" %% "zio" % "1.0.0-RC16"
+        "dev.zio" %% "zio" % "1.0.3"
       ),
       scalacOptions := commonScalacOptions,
       addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full),

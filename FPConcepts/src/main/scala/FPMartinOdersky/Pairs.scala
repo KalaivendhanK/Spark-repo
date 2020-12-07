@@ -1,4 +1,4 @@
-package functionalProgrammingInScalaMartinOdersky
+package FPMartinOdersky
 
 // TODO : Revisit the logic for isPrime Function
 object Pairs extends App {

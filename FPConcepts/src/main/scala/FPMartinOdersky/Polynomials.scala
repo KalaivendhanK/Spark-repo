@@ -1,4 +1,4 @@
-package functionalProgrammingInScalaMartinOdersky
+package FPMartinOdersky
 
 //Object for performing operation on polynomials
 // 5x^3+2x^2-4x

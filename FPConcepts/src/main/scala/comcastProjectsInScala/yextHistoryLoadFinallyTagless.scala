@@ -1,11 +1,11 @@
-package GeneralFPLearningsMichaelPilquist
+package comcastProjectsInScala
 
 import java.io._
 import java.text.SimpleDateFormat
 import java.util.Date
 
-import net.liftweb.json.{ DefaultFormats, _ }
-import scalaj.http.{ Http, HttpResponse }
+import net.liftweb.json._
+import scalaj.http.{Http, HttpResponse}
 
 import scala.io.StdIn.readLine
 import scala.util.Try
@@ -135,7 +135,8 @@ object YextTimetrade extends App {
       print(stateBuild.eval(2))
     }
   }
-  StateCheck.execute
+  //Uncomment the below line to run the state check code defined above
+//  StateCheck.execute
 
   case class SafeRunAPI[+Action](action: () => Action)
   //  {
@@ -329,5 +330,5 @@ object YextTimetrade extends App {
   val writeToFileSafeRun: SafeRunAPI[Unit] =
     writeToFile[SafeRunAPI](filePath, yextEndpointUrl)
 
-  //  writeToFileSafeRun.action()
+    writeToFileSafeRun.action()
 }

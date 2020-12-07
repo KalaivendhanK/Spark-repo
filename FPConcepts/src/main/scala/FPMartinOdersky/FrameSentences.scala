@@ -1,4 +1,4 @@
-package functionalProgrammingInScalaMartinOdersky
+package FPMartinOdersky
 
 object FrameSentences extends App {
   //  val dictionary = Source.fromURL("https://svnweb.freebsd.org/csrg/share/dict/words?view=co&content-type=text/plain")

@@ -1,16 +1,13 @@
-package LearnCats
+package comcastProjectsInScala
 
-import simulacrum.{ typeclass, _ }
-import cats.{ Monad, Semigroup }
-import cats.implicits._
-import spray.json._
-import java.io.{ File, PrintWriter }
-import java.util.Calendar
+import java.io.{File, PrintWriter}
 import java.text.SimpleDateFormat
+import java.util.Calendar
 
-import LearnCats.YextHistoryLoadWithCats.loop
+import simulacrum.typeclass
+import spray.json._
 
-object YextHistoryLoadWithCats extends App {
+object YextHistoryLoadWithFinallyTagless extends App {
   @typeclass trait Monad[F[_]] {
     def lift[A](a: A): F[A]
     /* @op("<->") */ def map[A, B](fa: F[A])(f: A => B): F[B]

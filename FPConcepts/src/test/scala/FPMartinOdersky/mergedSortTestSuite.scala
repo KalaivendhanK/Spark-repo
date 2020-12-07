@@ -1,6 +1,6 @@
-package functionalProgrammingInScalaMartinOdersky
+package FPMartinOdersky
 
-import functionalProgrammingInScalaMartinOdersky._
+import FPMartinOdersky._
 import org.scalatest._
 
 class mergedSortTestSuite extends FunSuite with Matchers {

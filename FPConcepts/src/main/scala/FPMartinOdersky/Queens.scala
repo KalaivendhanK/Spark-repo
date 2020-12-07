@@ -1,4 +1,4 @@
-package functionalProgrammingInScalaMartinOdersky
+package FPMartinOdersky
 
 object Queens extends App {
   def queens(n: Int): Set[List[Int]] = {
