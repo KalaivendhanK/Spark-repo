@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 import net.liftweb.json._
-import scalaj.http.{Http, HttpResponse}
+import scalaj.http.{ Http, HttpResponse }
 
 import scala.io.StdIn.readLine
 import scala.util.Try
@@ -136,7 +136,7 @@ object YextTimetrade extends App {
     }
   }
   //Uncomment the below line to run the state check code defined above
-//  StateCheck.execute
+  //  StateCheck.execute
 
   case class SafeRunAPI[+Action](action: () => Action)
   //  {
@@ -330,5 +330,5 @@ object YextTimetrade extends App {
   val writeToFileSafeRun: SafeRunAPI[Unit] =
     writeToFile[SafeRunAPI](filePath, yextEndpointUrl)
 
-    writeToFileSafeRun.action()
+  writeToFileSafeRun.action()
 }

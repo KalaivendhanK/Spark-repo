@@ -1,6 +1,6 @@
 package comcastProjectsInScala
 
-import java.io.{File, PrintWriter}
+import java.io.{ File, PrintWriter }
 import java.text.SimpleDateFormat
 import java.util.Calendar
 
