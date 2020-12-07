@@ -11,7 +11,6 @@ class Example1 {
     val result = event.getRecords.asScala.map(record => decodeS3Key(record.getS3.getObject.getKey)).asJava
     println(result)
     result
-
   }
   //  def getSourceBuckets(event: S3Event): Unit = {
   //    println("Into The Lambda Function")
