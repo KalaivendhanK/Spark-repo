@@ -1,11 +1,15 @@
 import sbt._
 import scalariform.formatter.preferences._
 
+//sbt shell command line aliases
+addCommandAlias("cd", "project")
+addCommandAlias("ll", "projects")
+addCommandAlias("cc", "console")
 
-lazy val commonDeps = Seq("org.apache.spark" %% "spark-core" % "2.4.3",
-  "org.apache.spark" %% "spark-sql" % "2.4.3",
+lazy val commonDeps = Seq(
   "org.scalatest" %% "scalatest" % "3.2.0-SNAP10" % "test",
-  "org.scalacheck" %% "scalacheck" % "1.14.0" % "test")
+  "org.scalacheck" %% "scalacheck" % "1.14.0" % "test"
+)
 
 lazy val commonScalacOptions = Seq(
   "-deprecation",
@@ -37,11 +41,11 @@ lazy val commonSettings = Seq(
 )
 
  // Root Project
-lazy val root = (project in file(".")).
-  aggregate(scalaProgramming, mysqlSpark)
-  .settings(
-    aggregate in update := false
-  )
+lazy val root = (project in file("."))
+//  .aggregate(scalaProgramming, mysqlSpark)
+//  .settings(
+//    aggregate in update := false
+//  )
 
  /*
  Project 1. ScalaProgramming
@@ -74,9 +78,16 @@ lazy val mysqlSpark = (project in file("mysqlSpark")).
     name := "mysqlSpark"
   ).
   settings(
+    resolvers ++= Seq(
+      Resolver.sonatypeRepo("releases"),
+      "aws-glue-etl-artifacts" at "https://aws-glue-etl-artifacts.s3.amazonaws.com/release/"
+    ),
     libraryDependencies ++= Seq(
+      "org.apache.spark" %% "spark-core" % "2.4.3",
+      "org.apache.spark" %% "spark-sql" % "2.4.3",
       "mysql" % "mysql-connector-java" % "5.1.16",
-      "com.amazonaws" % "aws-java-sdk-glue" % "1.11.811"
+//      "com.amazonaws" % "aws-java-sdk-glue" % "1.11.918"
+      "com.amazonaws" % "AWSGlueETL" % "1.0.0"
     )
   )
 
@@ -107,6 +118,7 @@ lazy val FPConcepts = (project in file("FPConcepts")).
         "net.liftweb" %% "lift-json" % "3.4.1",
         "org.scalaj" %% "scalaj-http" % "2.3.0",
         "com.lihaoyi" %% "upickle" % "0.7.1",
+        "io.circe" %% "circe-parser" % "0.14.0-M1",
         specs2Core,
         specs2Scalacheck,
         scalacheck,
@@ -118,9 +130,6 @@ lazy val FPConcepts = (project in file("FPConcepts")).
       addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.4")
   )
 
-addCommandAlias("cd", "project")
-addCommandAlias("ll", "projects")
-addCommandAlias("cc", "console")
 
 /*
 Project 4. AWSProjects

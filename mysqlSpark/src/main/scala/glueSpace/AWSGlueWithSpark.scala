@@ -1,0 +1,6 @@
+package glueSpace
+
+object AWSGlueWithSpark {
+
+
+}

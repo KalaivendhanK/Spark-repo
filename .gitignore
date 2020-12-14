@@ -23,7 +23,11 @@ project/project
 #metals specific
 .bloop/
 .metals
+*metals*
+*bloop*
+.metals/
+.ammonite/
+metals.sbt
 
 #VSC 
 .vscode/*
-*metals*

@@ -1,3 +1,5 @@
+package sparkSpace
+
 import org.apache.spark.sql.SparkSession
 
 object AccessingMysqlFromSpark {
@@ -14,21 +16,21 @@ object AccessingMysqlFromSpark {
     import spark.implicits._
 
     val mysqlCustomersDF = spark.read.format("jdbc").
-      option("url", "jdbc:mysql://localhost:3306/classicmodels").
+      option("url", "jdbc:mysql://localhost:3306/mysql").
       option("driver", "com.mysql.jdbc.Driver").
-      option("dbtable", "customers").
+      option("dbtable", "help_topic").
       option("user", "root").
-      option("password", "mysql").
+      option("password", "Comcastpass123").
       load()
 
-    val customersDS = mysqlCustomersDF.as[CustomerSchema]
-
+//    val customersDS = mysqlCustomersDF.as[CustomerSchema]
+//    customersDS.createOrReplaceTempView("customers")
     println(s"""|some text
             |line 1
             |line 2
 """.stripMargin)
 
-    customersDS.createOrReplaceTempView("customers")
+    mysqlCustomersDF.createOrReplaceTempView("customers")
 
     val totalCustomersCount = spark.sql("select count(*) from customers")
 

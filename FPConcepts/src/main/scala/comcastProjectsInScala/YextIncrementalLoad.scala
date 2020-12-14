@@ -2,6 +2,7 @@ package comcastProjectsInScala
 
 import ujson._
 import upickle._
+import io.circe._, io.circe.parser._
 
 import scala.io.BufferedSource
 
@@ -32,14 +33,42 @@ case class ParsedInput(
   additional_hours_text_rt: String,
   is_closed_rt: String,
   reopen_date_rt: String)
-class YextIncrementalLoad {
-  //  def loadInputEventFromFile(fileName: String): ParsedInput ={
-  //    @ val jsonString = os.read(os.pwd / "ammonite-releases.json")
-  //    ParsedInput(???)
-  //    ???
-  //  }
+
+object YextIncrementalLoad extends App {
   val event: BufferedSource = scala.io.Source.fromFile("FPConcepts/src/main/resources/Yext-incremental-input-event.json")
   val event_string: String = event.mkString
   println(event_string)
   event.close
+
+  trait Externals[A]{
+    def failures : Unit
+  }
+
+  class Database
+  class Redshift(val dbName: String,val hostName: String ) extends Externals[Database]{
+    override def failures: Unit = println("Failed to connect to redshift")
+  }
+
+  case class Parser[A](readFromSource: A)
+
+  abstract class Monad[F[_]]{
+    def flatMap[A,B](fa: F[A])(f: A => F[B]) :F[B]
+    def map[A,B](fa: F[A])(f: A => B) :F[B]
+    def pure[A](a: A) :F[A]
+  }
+
+  object Parser {
+    val flatMapForParser: Monad[Parser] = new Monad{
+      override def flatMap[A, B](fa: Parser[A])(f: A => Parser[B]): Parser[B] = f(fa.readFromSource)
+
+      override def map[A, B](fa: Parser[A])(f: A => B): Parser[B] = pure(f(fa.readFromSource))
+
+      override def pure[A](a: A): Parser[A] = Parser(a)
+    }
+  }
+
+  import Parser.flatMapForParser._
+//  for {
+//    _ <- flatMap()
+//  }
 }
