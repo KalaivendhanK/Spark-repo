@@ -12,6 +12,3 @@ addSbtPlugin("org.scala-js" % "sbt-scalajs" % "1.0.1")
 
 //Plugin to support the cats library
 addSbtPlugin("org.lyranthe.sbt" % "partial-unification" % "1.1.2")
-
-//Plugin to run the gitter templates from SBT
-//addSbtPlugin("org.foundweekends.giter8" %% "sbt-giter8" % "0.11.0")
