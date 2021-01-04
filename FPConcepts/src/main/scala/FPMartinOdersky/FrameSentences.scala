@@ -17,8 +17,8 @@ object FrameSentences extends App {
   //  convert the mapping of characters to numbers.
   val wordsWithNumbers: Map[Char, Char] =
     for {
-      (digits, letters) <- dialpadMappings
-      eachLetters <- letters
+      (digits, letters) ← dialpadMappings
+      eachLetters ← letters
     } yield eachLetters -> digits
 
   //  creates the string of numbers for the given word.
@@ -32,9 +32,9 @@ object FrameSentences extends App {
     if (number.isEmpty) Set(List())
     else {
       for {
-        split <- 1 to number.length
-        word <- wordsForNumber(number take split)
-        rest <- encode(number drop split)
+        split ← 1 to number.length
+        word ← wordsForNumber(number take split)
+        rest ← encode(number drop split)
       } yield word :: rest
     }.toSet
 

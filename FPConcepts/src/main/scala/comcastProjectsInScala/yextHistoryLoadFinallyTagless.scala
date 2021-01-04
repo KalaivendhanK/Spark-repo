@@ -26,11 +26,11 @@ object YextTimetrade extends App {
   //      CancelledAppointments()
   //  }
   trait ChainCapability[F[_]] {
-    def chain[A, B](fa: F[A])(f: A => F[B]): F[B]
+    def chain[A, B](fa: F[A])(f: A ⇒ F[B]): F[B]
 
-    def map[A, B](fa: F[A])(f: A => B): F[B]
+    def map[A, B](fa: F[A])(f: A ⇒ B): F[B]
 
-    def lift[A](a: => A): F[A]
+    def lift[A](a: ⇒ A): F[A]
 
     def eval[A](fa: F[A]): A
 
@@ -63,14 +63,16 @@ object YextTimetrade extends App {
     ExternalCapability[F].readFromConsole()
 
   def readFromAPI[F[_]: ExternalCapability](
-    url: String): F[HttpResponse[String]] = ExternalCapability[F].readFromAPI(url)
+      url: String
+  ): F[HttpResponse[String]] = ExternalCapability[F].readFromAPI(url)
 
   def readFromAPIAsString[F[_]: ExternalCapability](url: String): F[String] =
     ExternalCapability[F].readFromAPIAsString(url)
 
   def writeToFile[F[_]: ExternalCapability](
-    lines: String,
-    fileName: String): F[Unit] =
+      lines: String,
+      fileName: String
+  ): F[Unit] =
     ExternalCapability[F].writeToFile(lines, fileName)
 
   trait StateChangeCapability[F[_]] {
@@ -82,55 +84,55 @@ object YextTimetrade extends App {
       S.incrementByOne(fa)
   }
   implicit class ExtentionsForKindZeroTypes[F[_], A](fa: F[A]) {
-    def map[B](f: A => B)(implicit F: ChainCapability[F]): F[B] =
+    def map[B](f: A ⇒ B)(implicit F: ChainCapability[F]): F[B] =
       F.map(fa)(f)
-    def flatMap[B](f: A => F[B])(implicit F: ChainCapability[F]): F[B] =
+    def flatMap[B](f: A ⇒ F[B])(implicit F: ChainCapability[F]): F[B] =
       F.chain(fa)(f)
     def eval(implicit F: ChainCapability[F]): A = F.eval(fa)
   }
-  implicit def lift[F[_], A](a: => A)(implicit F: ChainCapability[F]): F[A] =
+  implicit def lift[F[_], A](a: ⇒ A)(implicit F: ChainCapability[F]): F[A] =
     F.lift(a)
   //  implicit def eval[F[_], A](implicit F: ChainCapability[F]): A = F.eval()
 
   abstract class State[S, A] {
-    def map[B](fa: A => B): State[S, B] =
-      State[S, B] { si: S =>
+    def map[B](fa: A ⇒ B): State[S, B] =
+      State[S, B] { si: S ⇒
         val (s, a) = eval(si)
         (s, fa(a))
       }
 
-    def flatMap[B](fa: A => State[S, B]): State[S, B] =
-      State[S, B] { si: S =>
+    def flatMap[B](fa: A ⇒ State[S, B]): State[S, B] =
+      State[S, B] { si: S ⇒
         val (s, a) = eval(si)
         fa(a).eval(s)
       }
     def eval(initialState: S): (S, A)
   }
   object State {
-    def apply[S, A](f: S => (S, A)): State[S, A] =
+    def apply[S, A](f: S ⇒ (S, A)): State[S, A] =
       new State[S, A] {
         override def eval(initialState: S): (S, A) = f(initialState)
       }
   }
 
   implicit class extensionMethodsForState[S, A](fa: State[S, A]) {
-    def otherMap[B](f: A => B): State[S, B] = fa.map(f)
-    def otherFlatMap[B](f: A => State[S, B]): State[S, B] = fa.flatMap(f)
+    def otherMap[B](f: A ⇒ B): State[S, B] = fa.map(f)
+    def otherFlatMap[B](f: A ⇒ State[S, B]): State[S, B] = fa.flatMap(f)
   }
 
   object StateCheck {
     def execute = {
-      val evaledState = State[Int, Int](x => (x, 1)).eval(1)
+      val evaledState = State[Int, Int](x ⇒ (x, 1)).eval(1)
       println(s"evaledState = $evaledState")
-      val flatMappedState = State[Int, Int](x => (x, 1)).map(_ + 1).eval(1)
+      val flatMappedState = State[Int, Int](x ⇒ (x, 1)).map(_ + 1).eval(1)
       println(s"flatMappedState = $flatMappedState")
       val otherFlatMappedState =
-        State[Int, Int](x => (x, 1)).otherMap(_ + 1).eval(1)
+        State[Int, Int](x ⇒ (x, 1)).otherMap(_ + 1).eval(1)
       println(s"otherFlatMappedState = $otherFlatMappedState")
 
-      val state1 = State[Int, Int](x => (x, 1))
+      val state1 = State[Int, Int](x ⇒ (x, 1))
       val stateBuild = for {
-        s1 <- state1.map(_ + 1)
+        s1 ← state1.map(_ + 1)
       } yield s1
       print(stateBuild.eval(2))
     }
@@ -138,7 +140,7 @@ object YextTimetrade extends App {
   //Uncomment the below line to run the state check code defined above
   //  StateCheck.execute
 
-  case class SafeRunAPI[+Action](action: () => Action)
+  case class SafeRunAPI[+Action](action: () ⇒ Action)
   //  {
   //    def map[B](f: Action => B): SafeRunAPI[B] = SafeRunAPI(() => f(action()))
   //    def flatMap[B](f: Action => SafeRunAPI[B]): SafeRunAPI[B] =
@@ -150,42 +152,45 @@ object YextTimetrade extends App {
     implicit val SafeRunApiWithChainingCapability: ChainCapability[SafeRunAPI] =
       new ChainCapability[SafeRunAPI] {
         def chain[A, B](
-          fa: SafeRunAPI[A])(f: A => SafeRunAPI[B]): SafeRunAPI[B] =
-          SafeRunAPI(() => f(fa.action()).action())
+            fa: SafeRunAPI[A]
+        )(f: A ⇒ SafeRunAPI[B]): SafeRunAPI[B] =
+          SafeRunAPI(() ⇒ f(fa.action()).action())
 
-        def map[A, B](fa: SafeRunAPI[A])(f: A => B): SafeRunAPI[B] =
-          SafeRunAPI(() => f(fa.action()))
+        def map[A, B](fa: SafeRunAPI[A])(f: A ⇒ B): SafeRunAPI[B] =
+          SafeRunAPI(() ⇒ f(fa.action()))
 
-        def lift[A](a: => A): SafeRunAPI[A] =
-          SafeRunAPI(() => a)
+        def lift[A](a: ⇒ A): SafeRunAPI[A] =
+          SafeRunAPI(() ⇒ a)
 
         def eval[A](fa: SafeRunAPI[A]): A = fa.action()
 
-        def point[A]: SafeRunAPI[Unit] = SafeRunAPI(() => ())
+        def point[A]: SafeRunAPI[Unit] = SafeRunAPI(() ⇒ ())
       }
 
     implicit val SafeRunApiWithExternalCapability: ExternalCapability[SafeRunAPI] =
       new ExternalCapability[SafeRunAPI] {
         override def printString(anyValue: Any): SafeRunAPI[Unit] =
-          SafeRunAPI(() => println(anyValue))
+          SafeRunAPI(() ⇒ println(anyValue))
 
         override def readFromConsole(): SafeRunAPI[String] =
-          SafeRunAPI(() => readLine())
+          SafeRunAPI(() ⇒ readLine())
 
         override def readFromAPI(
-          url: String): SafeRunAPI[HttpResponse[String]] =
-          SafeRunAPI(() => Http(url).asString)
+            url: String
+        ): SafeRunAPI[HttpResponse[String]] =
+          SafeRunAPI(() ⇒ Http(url).asString)
 
         override def readFromAPIAsString(url: String): SafeRunAPI[String] =
-          SafeRunAPI(() => {
+          SafeRunAPI(() ⇒ {
             val yextData = scala.io.Source.fromURL(url).mkString
             yextData
           })
 
         override def writeToFile(
-          lines: String,
-          fileName: String): SafeRunAPI[Unit] =
-          SafeRunAPI { () =>
+            lines: String,
+            fileName: String
+        ): SafeRunAPI[Unit] =
+          SafeRunAPI { () ⇒
             {
               val pw: PrintWriter = new PrintWriter(new File(fileName))
               pw.write(lines)
@@ -197,17 +202,19 @@ object YextTimetrade extends App {
     implicit val stateChangeCapabilityWithSafeRunAPI: StateChangeCapability[SafeRunAPI] =
       new StateChangeCapability[SafeRunAPI] {
         override def incrementByOne[A](
-          fa: SafeRunAPI[A]): SafeRunAPI[Int] =
-          SafeRunAPI(() => fa.action().asInstanceOf[Int] + 1)
+            fa: SafeRunAPI[A]
+        ): SafeRunAPI[Int] =
+          SafeRunAPI(() ⇒ fa.action().asInstanceOf[Int] + 1)
       }
   }
 
   def parseHttpResponse[F[_]: ChainCapability: ExternalCapability](
-    value: F[HttpResponse[String]]): F[Either[String, Map[String, Any]]] = {
+      value: F[HttpResponse[String]]
+  ): F[Either[String, Map[String, Any]]] = {
     for {
-      response <- value
+      response ← value
       //      _ <- printString(response)
-      countEither <- if (response.isSuccess)
+      countEither ← if (response.isSuccess)
         Right {
           (parse(response.body) \\ "response" \\ "count").values
         }
@@ -216,26 +223,28 @@ object YextTimetrade extends App {
   }
 
   def matchEitherOfCount[F[_]: ExternalCapability](
-    countEither: Either[String, Map[String, Any]])(implicit FA: ChainCapability[F]): F[BigInt] = countEither match {
-    case Right(value) =>
+      countEither: Either[String, Map[String, Any]]
+  )(implicit FA: ChainCapability[F]): F[BigInt] = countEither match {
+    case Right(value) ⇒
       FA.lift {
         value
           .getOrElse("count", 0)
           .asInstanceOf[BigInt]
       }
-    case Left(error) =>
+    case Left(error) ⇒
       printString(error)
       FA.lift(0)
   }
 
   def getYextHistoryDataTotalRecordCount[F[_]: ChainCapability: ExternalCapability](
-    url: String): F[BigInt] =
+      url: String
+  ): F[BigInt] =
     for {
-      urlString <- readFromAPI(url)
+      urlString ← readFromAPI(url)
       //      _ <- printString(urlString)
-      countEither <- parseHttpResponse(lift(urlString))
-      count <- matchEitherOfCount(countEither)
-      _ <- printString(count)
+      countEither ← parseHttpResponse(lift(urlString))
+      count ← matchEitherOfCount(countEither)
+      _ ← printString(count)
     } yield count
 
   type YextRecords[F[_]] = F[HttpResponse[String]]
@@ -248,8 +257,9 @@ object YextTimetrade extends App {
     todayDate
   }
   def doLoop[F[_]: ExternalCapability: ChainCapability](
-    filePath: String,
-    totalCount: BigInt): F[Unit] = {
+      filePath: String,
+      totalCount: BigInt
+  ): F[Unit] = {
     //    val todayDate = java.time.LocalDate.now
     val dateFmt = "yyyyMMdd"
     val todayDate: String = {
@@ -265,11 +275,11 @@ object YextTimetrade extends App {
         s"""https://liveapi.yext.com/v2/accounts/me/locations?api_key=dbaf2f4bfa0b0e2da6417ed815706ae5&v=${todayDate}&&limit=${limit}&offset=${offset}"""
       val fileName = s"""${filePath}yext-history-${todayDate}-part-${index}"""
       val res: F[Unit] = for {
-        _ <- printString(s"Executing the url string ${incUrl}")
-        data <- readFromAPIAsString(incUrl)
+        _ ← printString(s"Executing the url string ${incUrl}")
+        data ← readFromAPIAsString(incUrl)
         //        _ <- printString(data)
-        _ <- writeToFile(data, fileName)
-        _ <- printString(s"Successfully written to the file ${fileName}")
+        _ ← writeToFile(data, fileName)
+        _ ← printString(s"Successfully written to the file ${fileName}")
       } yield ()
       res.eval
       offset += limit
@@ -313,18 +323,19 @@ object YextTimetrade extends App {
   //  }
 
   def writeToFile[F[_]: ChainCapability: ExternalCapability](
-    //      records: YextRecords[F],
-    filePathF: F[String],
-    url: String): F[Unit] = {
+      //      records: YextRecords[F],
+      filePathF: F[String],
+      url: String
+  ): F[Unit] = {
     for {
-      totalCount <- getYextHistoryDataTotalRecordCount(url)
-      filePath <- filePathF
-      writeResponse <- doLoop(filePath, totalCount)
+      totalCount ← getYextHistoryDataTotalRecordCount(url)
+      filePath ← filePathF
+      writeResponse ← doLoop(filePath, totalCount)
     } yield ()
   }
 
   def filePath: SafeRunAPI[String] =
-    SafeRunAPI(() => "C:\\Users\\kkalya622\\Documents\\temporary_workspace\\")
+    SafeRunAPI(() ⇒ "C:\\Users\\kkalya622\\Documents\\temporary_workspace\\")
   val yextEndpointUrl =
     "https://liveapi.yext.com/v2/accounts/me/locations?api_key=dbaf2f4bfa0b0e2da6417ed815706ae5&v=20200505&&limit=1&offset=1"
   val writeToFileSafeRun: SafeRunAPI[Unit] =

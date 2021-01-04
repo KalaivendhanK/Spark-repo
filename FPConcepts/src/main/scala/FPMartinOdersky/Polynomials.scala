@@ -12,7 +12,7 @@ object Polynomial {
       val (exp, coeff) = otherTerm
       terms + (exp -> (coeff + terms(exp)))
     }
-    override def toString(): String = (for ((expo, coeff) <- terms.toList.sorted.reverse) yield coeff + "x^" + expo) mkString "+"
+    override def toString(): String = (for ((expo, coeff) ← terms.toList.sorted.reverse) yield coeff + "x^" + expo) mkString "+"
     def adjust(term: (Int, Double)): (Int, Double) = {
       val (expo, coeff) = term
       expo -> (coeff + termsWithValue(expo))
