@@ -23,8 +23,8 @@ object AccessingMysqlFromSpark {
       option("password", "Comcastpass123").
       load()
 
-//    val customersDS = mysqlCustomersDF.as[CustomerSchema]
-//    customersDS.createOrReplaceTempView("customers")
+    //    val customersDS = mysqlCustomersDF.as[CustomerSchema]
+    //    customersDS.createOrReplaceTempView("customers")
     println(s"""|some text
             |line 1
             |line 2

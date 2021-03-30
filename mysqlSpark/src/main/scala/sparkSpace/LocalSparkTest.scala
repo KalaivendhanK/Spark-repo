@@ -1,19 +1,18 @@
 package sparkSpace
 
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.types.{StringType, StructField, StructType}
-
+import org.apache.spark.sql.types.{ StringType, StructField, StructType }
 
 class Schema {
 }
 
 object LocalSparkTest {
   def main(args: Array[String]): Unit = {
-     val spark = SparkSession
-       .builder()
-       .appName("spark-local-test")
-       .master("local[*]")
-       .getOrCreate()
+    val spark = SparkSession
+      .builder()
+      .appName("spark-local-test")
+      .master("local[*]")
+      .getOrCreate()
     val sc = spark.sparkContext
 
     import spark.implicits._
@@ -29,8 +28,8 @@ object LocalSparkTest {
     ).toDF("id", "name", "values")
     someDF.createTempView("test_table")
 
-    val agg_data = spark sql("select id,collect_list(values) from test_table group by id")
-    val reference_data = spark sql("select *,count(*) over (partition by id order by values asc) from test_table")
+    val agg_data = spark sql ("select id,collect_list(values) from test_table group by id")
+    val reference_data = spark sql ("select *,count(*) over (partition by id order by values asc) from test_table")
     reference_data show
 
   }

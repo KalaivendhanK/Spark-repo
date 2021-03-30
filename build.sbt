@@ -86,12 +86,23 @@ lazy val mysqlSpark = (project in file("mysqlSpark")).
     libraryDependencies ++= Seq(
       "org.apache.spark" %% "spark-core" % "2.4.3",
       "org.apache.spark" %% "spark-sql" % "2.4.3",
+      "org.apache.spark" %% "spark-hive" % "2.4.3",
       "mysql" % "mysql-connector-java" % "5.1.16",
+      "org.apache.hive" % "hive-jdbc" % "3.1.1",
+      "org.apache.hadoop" % "hadoop-common" % "3.1.0"
       //"com.amazonaws" % "aws-java-sdk-glue" % "1.11.918"
       //commented out the glue libs due to conflict between glue libs with spark libs.
       // There is a dedicated project AWSGlueProject to work with glue stuffs
       //"com.amazonaws" % "AWSGlueETL" % "1.0.0"
-    )
+    ),
+    dependencyOverrides ++= {
+      Seq(
+        "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.6.7.1",
+        "com.fasterxml.jackson.core" % "jackson-databind" % "2.6.7",
+        "com.fasterxml.jackson.core" % "jackson-core" % "2.6.7"
+      )
+    }
+
   )
 
 /*

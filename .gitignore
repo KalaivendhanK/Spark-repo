@@ -31,3 +31,7 @@ metals.sbt
 
 #VSC 
 .vscode/*
+
+#hive metastore
+metastore_db/*
+metastore_db

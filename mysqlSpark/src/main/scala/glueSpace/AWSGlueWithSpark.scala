@@ -2,5 +2,4 @@ package glueSpace
 
 object AWSGlueWithSpark {
 
-
 }
