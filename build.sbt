@@ -115,7 +115,7 @@ monads, monoids, Functors , Programming style using Tagless Final, etc.
 val specs2Version = "4.9.4" // use the version used by discipline
 val specs2Core = "org.specs2"       %% "specs2-core"       % specs2Version
 val specs2Scalacheck = "org.specs2" %% "specs2-scalacheck" % specs2Version
-val scalacheck = "org.scalacheck"   %% "scalacheck"        % "1.12.4"
+val scalacheck = "org.scalacheck"   %% "scalacheck"        % "1.14.0"
 
 lazy val FPConcepts = (project in file("FPConcepts"))
   .
