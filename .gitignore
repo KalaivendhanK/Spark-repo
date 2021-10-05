@@ -35,3 +35,4 @@ metals.sbt
 #hive metastore
 metastore_db/*
 metastore_db
+*/target
