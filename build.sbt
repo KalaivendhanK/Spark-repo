@@ -61,8 +61,16 @@ lazy val scalaProgramming = (project in file("scalaProgramming"))
     assemblyMergeStrategy in assembly := {
       case PathList("META-INF", xs @ _*) => MergeStrategy.discard
       case x                             => MergeStrategy.first
-    }
+    },
+    libraryDependencies ++= Seq(
+      "org.apache.spark" %% "spark-core"           % "2.4.3",
+      "org.apache.spark" %% "spark-sql"            % "2.4.3",
+      "org.apache.spark" %% "spark-hive"           % "2.4.3",
+      "mysql"             % "mysql-connector-java" % "5.1.16",
+      "org.apache.hive"   % "hive-jdbc"            % "3.1.1"
+    )
   )
+
 
 /*
 Project 2. mySqlSpark
@@ -96,6 +104,7 @@ lazy val mysqlSpark = (project in file("mysqlSpark"))
         "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.6.7.1",
         "com.fasterxml.jackson.core"    % "jackson-databind"     % "2.6.7",
         "com.fasterxml.jackson.core"    % "jackson-core"         % "2.6.7",
+
         //THere are multiple version of hadoop libraries , overriding to version 2.6.5 to avoid conflicts
         "org.apache.hadoop" % "hadoop-annotations"           % "2.6.5",
         "org.apache.hadoop" % "hadoop-auth"                  % "2.6.5",
@@ -103,7 +112,7 @@ lazy val mysqlSpark = (project in file("mysqlSpark"))
         "org.apache.hadoop" % "hadoop-mapreduce-client-core" % "2.6.5"
       )
     },
-    //Excluding the slf4j logger from spark due to multiple slf4j logger libraries conflicts
+    //Excluding the slf4j logger from spark due to multiple slf4j logger library conflicts
     libraryDependencies ~= { _.map(_.exclude("org.apache.logging.log4j", "log4j-slf4j-impl")) }
   )
 
@@ -219,7 +228,6 @@ lazy val dotty = project
 Project 6: ZparkIO
 This project users spark on top of ZIO library
  */
-
 lazy val zparkIOSettings = Seq(
   organization := "com.home.zparkIO",
   scalaVersion := "2.12.12",

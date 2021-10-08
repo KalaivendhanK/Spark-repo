@@ -7,17 +7,17 @@ import com.home.zparkio.zparkio.Application._
 import com.home.zparkio.zparkio.services._
 import com.leobenkel.zparkio.config.scallop.CommandLineArgumentScallop
 import izumi.reflect.Tag
-import zio.{Has, Task, ZIO, ZLayer}
+import zio.{ Has, Task, ZIO, ZLayer }
 
 trait Application extends ZparkioApp[Arguments, RuntimeEnv, OutputType] {
-  implicit lazy final override val tagC:   Tag[Arguments] = Tag.tagFromTagMacro
+  implicit lazy final override val tagC: Tag[Arguments] = Tag.tagFromTagMacro
   implicit lazy final override val tagEnv: Tag[RuntimeEnv] = Tag.tagFromTagMacro
 
   // To add new services
   lazy final override protected val env: ZLayer[ZPARKIO_ENV, Throwable, RuntimeEnv] =
     ZLayer.succeed(())
 
-  override protected def sparkFactory:             FACTORY_SPARK = SparkBuilder
+  override protected def sparkFactory: FACTORY_SPARK = SparkBuilder
   lazy final override protected val loggerFactory: FACTORY_LOG = Logger.Factory(Log)
 
   lazy final override protected val cliFactory: FACTORY_CLI =

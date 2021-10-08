@@ -1,11 +1,10 @@
 package GeneralFPLearningsJohnADoes.ExploreZIO
 
-import zio.{Has, IO, ZLayer}
-
+import zio.{ Has, IO, ZLayer }
 
 object YextHistoryUsingZio {
 
-  case class User(name: String,age: Int)
+  case class User(name: String, age: Int)
   case class UserId(id: BigInt)
   type UserRepo = Has[UserRepo.Service]
 

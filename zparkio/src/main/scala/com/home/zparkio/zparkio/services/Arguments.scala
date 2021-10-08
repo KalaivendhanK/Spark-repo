@@ -4,10 +4,10 @@ import com.leobenkel.zparkio.Services.CommandLineArguments
 import com.leobenkel.zparkio.Services.CommandLineArguments.CommandLineArguments
 import com.leobenkel.zparkio.config.scallop.CommandLineArgumentScallop
 import org.rogach.scallop.ScallopConf
-import zio.{Task, ZIO}
+import zio.{ Task, ZIO }
 
 case class Arguments(input: List[String])
-    extends ScallopConf(input) with CommandLineArgumentScallop.Service[Arguments] {
+  extends ScallopConf(input) with CommandLineArgumentScallop.Service[Arguments] {
 }
 
 object Arguments {
