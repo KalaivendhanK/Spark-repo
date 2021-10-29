@@ -251,3 +251,23 @@ lazy val zparkio = (project in file("zparkio"))
       "org.scalatest" %% "scalatest" % "3.2.9" % Test
     )
   )
+
+/*
+Project 7: zio-kafka
+This project users spark on top of ZIO library
+ */
+lazy val zioKafkaSettings = Seq(
+  organization := "com.home.zioKafka",
+  scalaVersion := "2.12.12",
+  version      := "0.0.1"
+)
+
+lazy val zioKafka = (project in file("zio-kafka"))
+  .settings(
+    name := "zio-kafka",
+    zioKafkaSettings,
+      libraryDependencies ++= Seq(
+        "dev.zio" %% "zio-kafka"   % "0.15.0",
+        "dev.zio" %% "zio-json"    % "0.1.5"
+      )
+  )
