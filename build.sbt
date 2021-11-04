@@ -256,18 +256,48 @@ lazy val zparkio = (project in file("zparkio"))
 Project 7: zio-kafka
 This project users spark on top of ZIO library
  */
-lazy val zioKafkaSettings = Seq(
-  organization := "com.home.zioKafka",
+lazy val streamingSettings = Seq(
+  organization := "com.home.streaming",
   scalaVersion := "2.12.12",
   version      := "0.0.1"
 )
 
-lazy val zioKafka = (project in file("zio-kafka"))
+lazy val AkkaVersion = "2.6.17"
+
+lazy val zioKafka = (project in file("streaming"))
   .settings(
-    name := "zio-kafka",
-    zioKafkaSettings,
+    name := "Streaming",
+    streamingSettings,
       libraryDependencies ++= Seq(
+        // zio kafka
         "dev.zio" %% "zio-kafka"   % "0.15.0",
-        "dev.zio" %% "zio-json"    % "0.1.5"
+        "dev.zio" %% "zio-json"    % "0.1.5",
+
+        // akka streams
+        "com.typesafe.akka" %% "akka-stream" % AkkaVersion,
+        "com.typesafe.akka" %% "akka-actor-typed" % AkkaVersion,
+        "com.typesafe.akka" %% "akka-stream-testkit" % AkkaVersion % Test
       )
+  )
+
+/*
+Project 8: akkaprogramming
+This project users spark on top of ZIO library
+ */
+lazy val akkaSettings = Seq(
+  organization := "com.home.streaming",
+  scalaVersion := "2.12.12",
+  version      := "0.0.1"
+)
+
+
+lazy val akkaProgramming = (project in file("akkaProgramming"))
+  .settings(
+    name := "akkaProgramming",
+    akkaSettings,
+    libraryDependencies ++= Seq(
+      // akka library
+      "com.typesafe.akka" %% "akka-actor-typed" % AkkaVersion,
+      "com.typesafe.akka" %% "akka-stream-testkit" % AkkaVersion % Test
+    )
   )

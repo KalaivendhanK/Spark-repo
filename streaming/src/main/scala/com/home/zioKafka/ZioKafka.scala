@@ -34,7 +34,6 @@ object ZioKafka extends zio.App {
   val consumer: ZLayer[Clock with Blocking, Throwable, Has[Consumer.Service]] =
     ZLayer
       .fromManaged(managedConsumer)
-
   /**
    * Read the stream of records from the kafka topic
    */
@@ -80,12 +79,12 @@ object ZioKafka extends zio.App {
   val matchSerde: Serde[Any, Match] =
     Serde
       .string
-      .inmapM( string =>
+      .inmapM( (string : String) =>
         ZIO
           .fromEither( string.fromJson[Match]
           .left
           .map(errorMessage => new RuntimeException(errorMessage)))
-    ) { theMatch =>
+    ) { (theMatch: Match) =>
       ZIO
         .effect(theMatch.toJson)
     }
@@ -98,6 +97,10 @@ object ZioKafka extends zio.App {
       .subscribeAnd(Subscription.topics("updates"))
       .plainStream(Serde.string, matchSerde)
 
+  /**
+    * Transform and print the stream values.
+    * Also, keep track of the last processed values of the stream by using `offsetBatches` function.
+    */
   val matchesPrintableStream: ZStream[Console with Any with Consumer with Clock, Throwable, OffsetBatch] =
     matchesStream
       .map(cr => (cr.value.score, cr.offset))
@@ -105,17 +108,27 @@ object ZioKafka extends zio.App {
       .map(_._2)
       .aggregateAsync(Consumer.offsetBatches)
 
+  /**
+    * Run's the stream into the Sink.
+    */
   val streamEffect: ZIO[Console with Any with Consumer with Clock, Throwable, Unit] =
     matchesPrintableStream
       .run(ZSink.foreach(offset => offset.commit))
       .tap( _ => zio.console.putStrLn("Waiting for input events"))
 
+  /**
+    * Main program to process the values in kafka stream.
+    * The effect is injected with the dependendencies `consumer` and `console` and ran at the END OF THE WORLD
+    */
   override def run(args: List[String]): URIO[zio.ZEnv, ExitCode] =
     streamEffect
       .provideSomeLayer(consumer ++ zio.console.Console.live)
       .exitCode
 }
 
+/**
+  * Simple program to generated hardcoded data into the kafka topic
+  */
 object ZioKafkaProducer extends zio.App{
   import ZioKafka._
   val producerSettings: ProducerSettings =
