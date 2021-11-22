@@ -40,14 +40,12 @@ lazy val commonSettings = Seq(
     .setPreference(RewriteArrowSymbols, false)
 )
 
-// Root Project
-lazy val root = (project in file("."))
-//  .aggregate(scalaProgramming, mysqlSpark)
-//  .settings(
-//    aggregate in update := false
-//  )
+/**
+ *Root Project
+*/
+lazy val root = project in file(".")
 
-/*
+/**
  Project 1. ScalaProgramming
  This project contains the various implementation of Sets in scala library
  Based on the guidance from Channel DevInsideYou
@@ -58,6 +56,7 @@ lazy val scalaProgramming = (project in file("scalaProgramming"))
   ).settings(
     initialCommands in console := "import com.home.collections._",
     name                       := "scalaProgramming",
+    // META-INF discarding
     assemblyMergeStrategy in assembly := {
       case PathList("META-INF", xs @ _*) => MergeStrategy.discard
       case x                             => MergeStrategy.first
@@ -72,7 +71,7 @@ lazy val scalaProgramming = (project in file("scalaProgramming"))
   )
 
 
-/*
+/**
 Project 2. mySqlSpark
 This project has the examples of spark and aws glue libraries as well
  */
@@ -116,7 +115,7 @@ lazy val mysqlSpark = (project in file("mysqlSpark"))
     libraryDependencies ~= { _.map(_.exclude("org.apache.logging.log4j", "log4j-slf4j-impl")) }
   )
 
-/*
+/**
 Project 3. FPConcepts
 This project has my personal learings on various Funcitonal programming concepts like
 monads, monoids, Functors , Programming style using Tagless Final, etc.
@@ -173,14 +172,12 @@ lazy val FPConcepts = (project in file("FPConcepts"))
     addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.4")
   )
 
-/*
+/**
 Project 4. AWSProjects
 This project has the programs related to the working on the services in AWS such as
 Lambda, Glue, etc using Scala and Funcitonal Programming Style.
  */
-lazy val AWSProjects = (project in file("AWSProjects"))
-  .
-//  disablePlugins(sbtassembly.AssemblyPlugin).
+lazy val AWSProjects = (project in file("AWSProjects")).
   settings(
     organization    := "com.home.projects",
     version         := "1.0",
@@ -224,7 +221,7 @@ lazy val dotty = project
   )
  */
 
-/*
+/**
 Project 6: ZparkIO
 This project users spark on top of ZIO library
  */
@@ -252,10 +249,10 @@ lazy val zparkio = (project in file("zparkio"))
     )
   )
 
-/*
+/**
 Project 7: zio-kafka
 This project users spark on top of ZIO library
- */
+*/
 lazy val streamingSettings = Seq(
   organization := "com.home.streaming",
   scalaVersion := "2.12.12",
@@ -272,6 +269,11 @@ lazy val zioKafka = (project in file("streaming"))
         // zio kafka
         "dev.zio" %% "zio-kafka"   % "0.15.0",
         "dev.zio" %% "zio-json"    % "0.1.5",
+        "org.apache.spark" %% "spark-core"           % "2.4.3",
+        "org.apache.spark" %% "spark-sql"            % "2.4.3",
+        "org.apache.spark" %% "spark-streaming"            % "2.4.3",
+        "org.apache.spark" %% "spark-streaming-kafka-0-10" % "2.4.8",
+        //"org.apache.spark" %% "spark-streaming-kafka" % "1.6.3",
 
         // akka streams
         "com.typesafe.akka" %% "akka-stream" % AkkaVersion,
@@ -280,10 +282,12 @@ lazy val zioKafka = (project in file("streaming"))
       )
   )
 
-/*
+/**
 Project 8: akkaprogramming
 This project users spark on top of ZIO library
  */
+lazy val AkkaVersion2 = "2.5.19"
+
 lazy val akkaSettings = Seq(
   organization := "com.home.streaming",
   scalaVersion := "2.12.12",
@@ -297,7 +301,31 @@ lazy val akkaProgramming = (project in file("akkaProgramming"))
     akkaSettings,
     libraryDependencies ++= Seq(
       // akka library
-      "com.typesafe.akka" %% "akka-actor-typed" % AkkaVersion,
-      "com.typesafe.akka" %% "akka-stream-testkit" % AkkaVersion % Test
+      "com.typesafe.akka" %% "akka-actor-typed" % AkkaVersion2,
+      "com.typesafe.akka" %% "akka-stream" % AkkaVersion2,
+      "com.typesafe.akka" %% "akka-stream-testkit" % AkkaVersion2 % Test
+    )
+  )
+
+
+/**
+Project 9: ZIO2.0
+This project is to learn about the library zio and its features
+Its a place to practise some latest features released by zio and its concepts
+*/
+lazy val zioSettings = Seq(
+  organization := "com.home.streaming",
+  scalaVersion := "2.12.12",
+  version      := "0.0.1"
+)
+
+lazy val ZIO = (project in file("ZIO"))
+  .settings(
+    name := "ZIO",
+    akkaSettings,
+    libraryDependencies ++= Seq(
+      "dev.zio" %% "zio" % "2.0.0-M5",
+      "dev.zio" %% "zio-test" % "2.0.0-M5",
+      "dev.zio" %% "zio-config" % "1.0.10"
     )
   )

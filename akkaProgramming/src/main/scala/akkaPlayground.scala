@@ -1,6 +1,6 @@
 import akka.actor.{Actor, ActorLogging, ActorRef, ActorSystem, Props}
 
-object Playground extends App{
+object akkaPlayground extends App{
 
   object SimpleActorClass {
     case class SendMessageBack(message: String)

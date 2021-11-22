@@ -4,6 +4,9 @@
  * Pre-requisites:
  *   Execute the docker-compose.yml file using `docker-compose up` command
  *   This will create the zookeeper and kafka containers running in the background at localhost:9092
+  *
+  *   There are two separate applications in this example program 1. Consumer , 2. Producer
+  *   Execute the consumer first followed by producer
  */
 package com.home.zioKafka
 
@@ -118,7 +121,7 @@ object ZioKafka extends zio.App {
 
   /**
     * Main program to process the values in kafka stream.
-    * The effect is injected with the dependendencies `consumer` and `console` and ran at the END OF THE WORLD
+    * The effect is injected with the dependencies `consumer` and `console` and ran at the END OF THE WORLD
     */
   override def run(args: List[String]): URIO[zio.ZEnv, ExitCode] =
     streamEffect
@@ -128,6 +131,7 @@ object ZioKafka extends zio.App {
 
 /**
   * Simple program to generated hardcoded data into the kafka topic
+  * Below produces sample data to the kafka topic to be read by the consumer program above
   */
 object ZioKafkaProducer extends zio.App{
   import ZioKafka._
