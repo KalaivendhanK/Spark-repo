@@ -4,13 +4,13 @@
  * Pre-requisites:
  *   Execute the docker-compose.yml file using `docker-compose up` command
  *   This will create the zookeeper and kafka containers running in the background at localhost:9092
-  *
-  *   There are two separate applications in this example program 1. Consumer , 2. Producer
-  *   Execute the consumer first followed by producer
+ *
+ *   There are two separate applications in this example program 1. Consumer , 2. Producer
+ *   Execute the consumer first followed by producer
  */
 package com.home.zioKafka
 
-import org.apache.kafka.clients.producer.{ProducerRecord, RecordMetadata}
+import org.apache.kafka.clients.producer.{ ProducerRecord, RecordMetadata }
 import zio._
 import zio.blocking.Blocking
 import zio.clock.Clock
@@ -82,15 +82,14 @@ object ZioKafka extends zio.App {
   val matchSerde: Serde[Any, Match] =
     Serde
       .string
-      .inmapM( (string : String) =>
+      .inmapM((string: String) =>
         ZIO
-          .fromEither( string.fromJson[Match]
-          .left
-          .map(errorMessage => new RuntimeException(errorMessage)))
-    ) { (theMatch: Match) =>
-      ZIO
-        .effect(theMatch.toJson)
-    }
+          .fromEither(string.fromJson[Match]
+            .left
+            .map(errorMessage => new RuntimeException(errorMessage)))) { (theMatch: Match) =>
+        ZIO
+          .effect(theMatch.toJson)
+      }
 
   /**
    * create stream with serde to encode and decode `Match` data types
@@ -101,9 +100,9 @@ object ZioKafka extends zio.App {
       .plainStream(Serde.string, matchSerde)
 
   /**
-    * Transform and print the stream values.
-    * Also, keep track of the last processed values of the stream by using `offsetBatches` function.
-    */
+   * Transform and print the stream values.
+   * Also, keep track of the last processed values of the stream by using `offsetBatches` function.
+   */
   val matchesPrintableStream: ZStream[Console with Any with Consumer with Clock, Throwable, OffsetBatch] =
     matchesStream
       .map(cr => (cr.value.score, cr.offset))
@@ -112,17 +111,17 @@ object ZioKafka extends zio.App {
       .aggregateAsync(Consumer.offsetBatches)
 
   /**
-    * Run's the stream into the Sink.
-    */
+   * Run's the stream into the Sink.
+   */
   val streamEffect: ZIO[Console with Any with Consumer with Clock, Throwable, Unit] =
     matchesPrintableStream
       .run(ZSink.foreach(offset => offset.commit))
-      .tap( _ => zio.console.putStrLn("Waiting for input events"))
+      .tap(_ => zio.console.putStrLn("Waiting for input events"))
 
   /**
-    * Main program to process the values in kafka stream.
-    * The effect is injected with the dependencies `consumer` and `console` and ran at the END OF THE WORLD
-    */
+   * Main program to process the values in kafka stream.
+   * The effect is injected with the dependencies `consumer` and `console` and ran at the END OF THE WORLD
+   */
   override def run(args: List[String]): URIO[zio.ZEnv, ExitCode] =
     streamEffect
       .provideSomeLayer(consumer ++ zio.console.Console.live)
@@ -130,10 +129,10 @@ object ZioKafka extends zio.App {
 }
 
 /**
-  * Simple program to generated hardcoded data into the kafka topic
-  * Below produces sample data to the kafka topic to be read by the consumer program above
-  */
-object ZioKafkaProducer extends zio.App{
+ * Simple program to generated hardcoded data into the kafka topic
+ * Below produces sample data to the kafka topic to be read by the consumer program above
+ */
+object ZioKafkaProducer extends zio.App {
   import ZioKafka._
   val producerSettings: ProducerSettings =
     ProducerSettings(List("localhost:9092"))
@@ -147,9 +146,8 @@ object ZioKafkaProducer extends zio.App{
       .fromManaged(producerManaged)
 
   val finalScore: Match = Match(Array(
-    MatchPlayer("ITA",0),
-    MatchPlayer("ENG",1)
-  ))
+    MatchPlayer("ITA", 0),
+    MatchPlayer("ENG", 1)))
 
   val producerRecord: ProducerRecord[String, Match] = new ProducerRecord[String, Match]("updates", "update-3", finalScore)
 

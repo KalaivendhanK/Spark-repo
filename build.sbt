@@ -222,7 +222,7 @@ lazy val dotty = project
  */
 
 /**
-Project 6: ZparkIO
+Project 5: ZparkIO
 This project users spark on top of ZIO library
  */
 lazy val zparkIOSettings = Seq(
@@ -250,8 +250,9 @@ lazy val zparkio = (project in file("zparkio"))
   )
 
 /**
-Project 7: zio-kafka
-This project users spark on top of ZIO library
+Project 6: Streaming
+This project is to work on various streaming concepts - spark streaming,
+ Kafka streaming, akka streams, etc
 */
 lazy val streamingSettings = Seq(
   organization := "com.home.streaming",
@@ -261,7 +262,7 @@ lazy val streamingSettings = Seq(
 
 lazy val AkkaVersion = "2.6.17"
 
-lazy val zioKafka = (project in file("streaming"))
+lazy val streaming = (project in file("streaming"))
   .settings(
     name := "Streaming",
     streamingSettings,
@@ -272,7 +273,8 @@ lazy val zioKafka = (project in file("streaming"))
         "org.apache.spark" %% "spark-core"           % "2.4.3",
         "org.apache.spark" %% "spark-sql"            % "2.4.3",
         "org.apache.spark" %% "spark-streaming"            % "2.4.3",
-        "org.apache.spark" %% "spark-streaming-kafka-0-10" % "2.4.8",
+        "org.apache.spark" %% "spark-streaming-kafka-0-10" % "2.4.8" % Provided,
+        "org.apache.spark" %% "spark-sql-kafka-0-10" % "2.4.8" % Provided,
         //"org.apache.spark" %% "spark-streaming-kafka" % "1.6.3",
 
         // akka streams
@@ -283,7 +285,7 @@ lazy val zioKafka = (project in file("streaming"))
   )
 
 /**
-Project 8: akkaprogramming
+Project 7: akkaprogramming
 This project users spark on top of ZIO library
  */
 lazy val AkkaVersion2 = "2.5.19"
@@ -309,7 +311,7 @@ lazy val akkaProgramming = (project in file("akkaProgramming"))
 
 
 /**
-Project 9: ZIO2.0
+Project 8: ZIO2.0
 This project is to learn about the library zio and its features
 Its a place to practise some latest features released by zio and its concepts
 */
