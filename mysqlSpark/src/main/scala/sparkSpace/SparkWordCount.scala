@@ -3,7 +3,7 @@ package sparkSpace
 import org.apache.spark.sql.{ Row, SparkSession }
 import org.apache.spark.sql.functions.{ col, count, explode, split }
 
-object WordCount extends App {
+object SparkWordCount extends App {
   val spark = SparkSession.builder.master("local").getOrCreate()
   val sc = spark.sparkContext
 

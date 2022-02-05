@@ -1,3 +1,4 @@
+package com.home.collections
 
 object WorkOuts extends App {
   trait Example {

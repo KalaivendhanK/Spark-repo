@@ -36,3 +36,6 @@ metals.sbt
 metastore_db/*
 metastore_db
 */target
+
+*/output/*
+output/*

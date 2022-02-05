@@ -3,7 +3,7 @@ package FPMartinOdersky
 // TODO : Revisit the logic for isPrime Function
 object Pairs extends App {
   val n = 10
-  val primePairsGenerator = (1 until n) flatMap { i ⇒
+  val primePairsGenerator: Seq[(Int, Int)] = (1 until n) flatMap { i ⇒
     (1 until i) map { j ⇒
       (i, j)
     }

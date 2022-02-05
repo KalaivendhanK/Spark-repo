@@ -60,14 +60,7 @@ lazy val scalaProgramming = (project in file("scalaProgramming"))
     assemblyMergeStrategy in assembly := {
       case PathList("META-INF", xs @ _*) => MergeStrategy.discard
       case x                             => MergeStrategy.first
-    },
-    libraryDependencies ++= Seq(
-      "org.apache.spark" %% "spark-core"           % "2.4.3",
-      "org.apache.spark" %% "spark-sql"            % "2.4.3",
-      "org.apache.spark" %% "spark-hive"           % "2.4.3",
-      "mysql"             % "mysql-connector-java" % "5.1.16",
-      "org.apache.hive"   % "hive-jdbc"            % "3.1.1"
-    )
+    }
   )
 
 
@@ -91,14 +84,20 @@ lazy val mysqlSpark = (project in file("mysqlSpark"))
       "org.apache.spark" %% "spark-sql"            % "2.4.3",
       "org.apache.spark" %% "spark-hive"           % "2.4.3",
       "mysql"             % "mysql-connector-java" % "5.1.16",
-      "org.apache.hive"   % "hive-jdbc"            % "3.1.1"
+      "org.apache.hive"   % "hive-jdbc"            % "3.1.1",
+      "org.scalatest"    %% "scalatest" % "3.0.5" % "test",
 
       //commented out the glue libs due to conflict between glue libs with spark libs.
       // There is a dedicated project AWSGlueProject to work with glue stuffs
       //"com.amazonaws" % "aws-java-sdk-glue" % "1.11.918"
       //"com.amazonaws" % "AWSGlueETL" % "1.0.0"
-    ),
-    dependencyOverrides ++= {
+
+      //Deltalake operations
+      "io.delta" %% "delta-core" % "0.6.1",
+      //ZIO
+      "dev.zio" %% "zio" % "1.0.5",
+),
+dependencyOverrides ++= {
       Seq(
         "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.6.7.1",
         "com.fasterxml.jackson.core"    % "jackson-databind"     % "2.6.7",
@@ -270,18 +269,31 @@ lazy val streaming = (project in file("streaming"))
         // zio kafka
         "dev.zio" %% "zio-kafka"   % "0.15.0",
         "dev.zio" %% "zio-json"    % "0.1.5",
+
+        // spark streaming
         "org.apache.spark" %% "spark-core"           % "2.4.3",
         "org.apache.spark" %% "spark-sql"            % "2.4.3",
         "org.apache.spark" %% "spark-streaming"            % "2.4.3",
         "org.apache.spark" %% "spark-streaming-kafka-0-10" % "2.4.8" % Provided,
         "org.apache.spark" %% "spark-sql-kafka-0-10" % "2.4.8" % Provided,
-        //"org.apache.spark" %% "spark-streaming-kafka" % "1.6.3",
 
         // akka streams
         "com.typesafe.akka" %% "akka-stream" % AkkaVersion,
         "com.typesafe.akka" %% "akka-actor-typed" % AkkaVersion,
-        "com.typesafe.akka" %% "akka-stream-testkit" % AkkaVersion % Test
-      )
+        "com.typesafe.akka" %% "akka-stream-testkit" % AkkaVersion % Test,
+
+        // Kafka streams
+//        "org.apache.kafka" % "kafka-streams" % "2.7.0",
+        "org.apache.kafka" % "kafka-clients" % "2.7.0",
+        "org.apache.kafka" %% "kafka-streams-scala" % "2.7.0",
+
+        // Flink
+        "org.apache.flink" %% "flink-scala" % "1.14.0",
+        "org.apache.flink" %% "flink-streaming-scala" % "1.14.0" % Provided
+),
+    dependencyOverrides ++= {
+      Seq("org.apache.kafka" % "kafka-clients" % "2.7.0")
+    }
   )
 
 /**

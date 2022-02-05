@@ -9,16 +9,18 @@ object RunningTotal {
   def queryData(spark: SparkSession, df: DataFrame): DataFrame = {
     df.createOrReplaceTempView("test")
 
-    val reference_data = spark sql ("""
-      select * from (
-        select *
-        ,sum(sal) over (order by dept asc ROWS BETWEEN unbounded preceding AND CURRENT ROW) as running_total
-        from test
+    spark.sql("""
+      SELECT * FROM (
+        SELECT *
+        ,SUM(sal) OVER (
+            ORDER BY dept ASC
+            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+            ) AS running_total
+        FROM test
         )
-        where running_total < 43000
-         order by dept,running_total asc
+        WHERE running_total < 43000
+         ORDER BY dept,running_total aSC
       """)
-    reference_data
   }
 
 }

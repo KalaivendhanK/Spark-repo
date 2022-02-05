@@ -2,6 +2,7 @@
  * This program is a follow up practice from the youtube video by RockTheJVM
  * YouTube Video URL - https://www.youtube.com/watch?v=ExFjjczwwHs
  * Pre-requisites:
+ *   Open terminal in current sub-project's root directory and
  *   Execute the docker-compose.yml file using `docker-compose up` command
  *   This will create the zookeeper and kafka containers running in the background at localhost:9092
  *

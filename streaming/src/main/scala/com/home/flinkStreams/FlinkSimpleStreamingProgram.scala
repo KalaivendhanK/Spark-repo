@@ -1,3 +1,5 @@
-package com.home.flinkStreams object FlinkSimpleStreamingProgram {
+package com.home.flinkStreams
+
+object FlinkSimpleStreamingProgram extends App {
 
 }

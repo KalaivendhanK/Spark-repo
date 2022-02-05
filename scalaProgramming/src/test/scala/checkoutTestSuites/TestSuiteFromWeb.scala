@@ -1,4 +1,4 @@
-package com.home.testing
+package checkoutTestSuites
 
 import collection.mutable.Stack
 import org.scalatest._

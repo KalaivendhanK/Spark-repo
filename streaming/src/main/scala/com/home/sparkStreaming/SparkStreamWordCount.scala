@@ -35,9 +35,14 @@ import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.{ col, window }
 import org.apache.spark.sql.streaming.Trigger._
 
-object SimpleWordCount extends App {
+object SparkStreamWordCount extends App {
 
-  val spark = SparkSession.builder().master("local[*]").config("spark.sql.shuffle.partitions", "4").getOrCreate()
+  val spark = SparkSession.builder()
+    .master("local[*]")
+       .config("spark.sql.shuffle.partitions", "4")
+    .config("spark.dynamicAllocation.enabled", true)
+    .config("spark.dynamicAllocation.shuffleTracking.enabled", true)
+    .getOrCreate()
 
   val df = spark.readStream
     .format("kafka")
