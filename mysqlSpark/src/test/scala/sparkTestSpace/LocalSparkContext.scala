@@ -1,7 +1,5 @@
 package sparkTestSpace
 
-import _root_.io.netty.util.internal.logging.{ InternalLoggerFactory, Slf4JLoggerFactory }
-import org.apache.spark._
 import org.apache.spark.sql.SparkSession
 import org.scalatest.{ BeforeAndAfterAll, BeforeAndAfterEach, Suite }
 

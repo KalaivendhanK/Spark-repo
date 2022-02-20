@@ -86,6 +86,11 @@ lazy val mysqlSpark = (project in file("mysqlSpark"))
       "mysql"             % "mysql-connector-java" % "5.1.16",
       "org.apache.hive"   % "hive-jdbc"            % "3.1.1",
       "org.scalatest"    %% "scalatest" % "3.0.5" % "test",
+      // Spark test
+      "org.apache.spark" %% "spark-core"           % "2.4.3" % Test classifier "tests",
+      "org.apache.spark" %% "spark-sql"            % "2.4.3" % Test classifier "tests",
+      "org.apache.spark" %% "spark-hive"           % "2.4.3" % Test classifier "tests",
+      "org.apache.spark" %% "spark-catalyst"       % "2.4.3" % Test classifier "tests",
 
       //commented out the glue libs due to conflict between glue libs with spark libs.
       // There is a dedicated project AWSGlueProject to work with glue stuffs
@@ -107,8 +112,10 @@ dependencyOverrides ++= {
         "org.apache.hadoop" % "hadoop-annotations"           % "2.6.5",
         "org.apache.hadoop" % "hadoop-auth"                  % "2.6.5",
         "org.apache.hadoop" % "hadoop-common"                % "2.6.5",
-        "org.apache.hadoop" % "hadoop-mapreduce-client-core" % "2.6.5"
-      )
+        "org.apache.hadoop" % "hadoop-mapreduce-client-core" % "2.6.5",
+
+        "org.scalatest"    %% "scalatest" % "3.0.5" % "test",
+  )
     },
     //Excluding the slf4j logger from spark due to multiple slf4j logger library conflicts
     libraryDependencies ~= { _.map(_.exclude("org.apache.logging.log4j", "log4j-slf4j-impl")) }
@@ -292,8 +299,12 @@ lazy val streaming = (project in file("streaming"))
         "org.apache.flink" %% "flink-streaming-scala" % "1.14.0" % Provided
 ),
     dependencyOverrides ++= {
-      Seq("org.apache.kafka" % "kafka-clients" % "2.7.0")
-    }
+      Seq("org.apache.kafka" % "kafka-clients" % "2.7.0",
+          "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.6.7.1",
+          "com.fasterxml.jackson.core"    % "jackson-databind"     % "2.6.7",
+          "com.fasterxml.jackson.core"    % "jackson-core"         % "2.6.7",
+        )
+      }
   )
 
 /**

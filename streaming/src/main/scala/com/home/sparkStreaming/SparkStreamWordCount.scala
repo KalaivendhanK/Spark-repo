@@ -34,12 +34,13 @@ package com.home.sparkStreaming
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.{ col, window }
 import org.apache.spark.sql.streaming.Trigger._
+import org.apache.spark.sql.functions._
 
 object SparkStreamWordCount extends App {
 
   val spark = SparkSession.builder()
-    .master("local[*]")
-       .config("spark.sql.shuffle.partitions", "4")
+    .master("local[4]")
+    .config("spark.sql.shuffle.partitions", "1")
     .config("spark.dynamicAllocation.enabled", true)
     .config("spark.dynamicAllocation.shuffleTracking.enabled", true)
     .getOrCreate()
@@ -48,20 +49,28 @@ object SparkStreamWordCount extends App {
     .format("kafka")
     .option("kafka.bootstrap.servers", "localhost:9092")
     .option("subscribe", "quickstart-events")
-    .option("startingOffsets", "latest")
+    .option("startingOffsets", "earliest")
     .load()
 
   val wordCountDf = df
     .withWatermark("timestamp", "10 seconds")
-    //    .selectExpr("cast(value as string) as text", "timestamp")
+    .selectExpr("cast(trim(value) as string) as value", "timestamp")
+    .filter(col("value").isNotNull && col("value") != " " && col("value") != null)
+    .select(split(col("value"), " ").alias("arr_splits"), col("timestamp"))
+    .select(explode(col("arr_splits")).alias("words"), col("timestamp"))
     .groupBy(
-      window(col("timestamp"), "5 seconds"), col("value"))
+      window(col("timestamp"), "5 seconds"), col("words"))
     .count()
+    .alias("count")
+    .select(col("words"), col("count"))
 
   wordCountDf.writeStream
-    .format("console")
+    .format("csv")
     .outputMode("append")
-    .trigger(ProcessingTime(10000))
+    .option("header", "true")
+    .trigger(ProcessingTime(2 * 1000))
+    .option("checkpointLocation", "output/streaming/wordcount/checkpointLocation/")
+    .option("path", "output/streaming/wordcount/data/")
     .start()
     .awaitTermination()
 

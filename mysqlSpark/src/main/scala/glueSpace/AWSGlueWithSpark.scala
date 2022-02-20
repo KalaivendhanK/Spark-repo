@@ -1,5 +1,0 @@
-package glueSpace
-
-object AWSGlueWithSpark {
-
-}
