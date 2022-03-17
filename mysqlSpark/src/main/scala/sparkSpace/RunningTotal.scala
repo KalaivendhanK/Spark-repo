@@ -1,11 +1,11 @@
 package sparkSpace
 
-import org.apache.spark.sql.{ DataFrame, SparkSession }
+import org.apache.spark.sql.{DataFrame, SparkSession}
 
 object RunningTotal {
 
   def main(array: Array[String]): Unit = {
-    val spark: SparkSession = SparkSession.builder().master("local").getOrCreate()
+    val spark: SparkSession   = SparkSession.builder().master("local").getOrCreate()
     import spark.implicits._
     val aDataFrame: DataFrame = Seq(
       ("A1", "D1", 10000),
@@ -15,7 +15,7 @@ object RunningTotal {
       ("A5", "D2", 4000),
       ("A6", "D3", 5000),
       ("A7", "D3", 6000),
-      ("A8", "D4", 5000),
+      ("A8", "D4", 5000)
     ).toDF("name", "dept", "sal")
 
     val result: DataFrame = queryData(spark, aDataFrame)

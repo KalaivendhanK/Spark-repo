@@ -7,8 +7,8 @@ addCommandAlias("ll", "projects")
 addCommandAlias("cc", "console")
 
 lazy val commonDeps = Seq(
-  "org.scalatest"  %% "scalatest"  % "3.2.0-SNAP10" % "test",
-  "org.scalacheck" %% "scalacheck" % "1.14.0"       % "test"
+  "org.scalatest" %% "scalatest" % "3.2.0-SNAP10" % "test",
+  "org.scalacheck" %% "scalacheck" % "1.14.0" % "test"
 )
 
 lazy val commonScalacOptions = Seq(
@@ -23,6 +23,7 @@ lazy val commonSettings = Seq(
   organization := "com.home.projects",
   scalaVersion := "2.12.7",
   libraryDependencies ++= commonDeps,
+  scalafmtOnCompile := true,
   scalariformPreferences := scalariformPreferences.value
     .setPreference(AlignSingleLineCaseStatements, true)
     .setPreference(DoubleIndentConstructorArguments, true)
@@ -37,61 +38,60 @@ lazy val commonSettings = Seq(
     .setPreference(IndentPackageBlocks, true)
     .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true)
     .setPreference(SpacesAroundMultiImports, true)
-    .setPreference(RewriteArrowSymbols, false)
+    .setPreference(RewriteArrowSymbols, true)
 )
 
-/**
- *Root Project
-*/
+/** Root Project
+  */
 lazy val root = project in file(".")
 
-/**
- Project 1. ScalaProgramming
- This project contains the various implementation of Sets in scala library
- Based on the guidance from Channel DevInsideYou
- */
+/** Project 1. ScalaProgramming
+  * This project contains the various implementation of Sets in scala library
+  * Based on the guidance from Channel DevInsideYou
+  */
 lazy val scalaProgramming = (project in file("scalaProgramming"))
   .settings(
     commonSettings: _*
-  ).settings(
+  )
+  .settings(
     initialCommands in console := "import com.home.collections._",
-    name                       := "scalaProgramming",
+    name := "scalaProgramming",
     // META-INF discarding
     assemblyMergeStrategy in assembly := {
       case PathList("META-INF", xs @ _*) => MergeStrategy.discard
-      case x                             => MergeStrategy.first
+      case x => MergeStrategy.first
     }
   )
 
-
-/**
-Project 2. mySqlSpark
-This project has the examples of spark and aws glue libraries as well
- */
+/** Project 2. mySqlSpark
+  * This project has the examples of spark and aws glue libraries as well
+  */
 lazy val mysqlSpark = (project in file("mysqlSpark"))
-  .disablePlugins(sbtassembly.AssemblyPlugin).settings(
+  .disablePlugins(sbtassembly.AssemblyPlugin)
+  .settings(
     commonSettings: _*
-  ).settings(
+  )
+  .settings(
     name := "mysqlSpark"
-  ).settings(
+  )
+  .settings(
     //resolver to download the glue spark libs - The jar is located in official aws s3 bucket.hence resolver is required
     resolvers ++= Seq(
       Resolver.sonatypeRepo("releases"),
       "aws-glue-etl-artifacts" at "https://aws-glue-etl-artifacts.s3.amazonaws.com/release/"
     ),
     libraryDependencies ++= Seq(
-      "org.apache.spark" %% "spark-core"           % "2.4.3",
-      "org.apache.spark" %% "spark-sql"            % "2.4.3",
-      "org.apache.spark" %% "spark-hive"           % "2.4.3",
-      "mysql"             % "mysql-connector-java" % "5.1.16",
-      "org.apache.hive"   % "hive-jdbc"            % "3.1.1",
-      "org.scalatest"    %% "scalatest" % "3.0.5" % "test",
+      "org.apache.spark" %% "spark-core" % "2.4.3",
+      "org.apache.spark" %% "spark-sql" % "2.4.3",
+      "org.apache.spark" %% "spark-hive" % "2.4.3",
+      "mysql" % "mysql-connector-java" % "5.1.16",
+      "org.apache.hive" % "hive-jdbc" % "3.1.1",
+      "org.scalatest" %% "scalatest" % "3.0.5" % "test",
       // Spark test
-      "org.apache.spark" %% "spark-core"           % "2.4.3" % Test classifier "tests",
-      "org.apache.spark" %% "spark-sql"            % "2.4.3" % Test classifier "tests",
-      "org.apache.spark" %% "spark-hive"           % "2.4.3" % Test classifier "tests",
-      "org.apache.spark" %% "spark-catalyst"       % "2.4.3" % Test classifier "tests",
-
+      "org.apache.spark" %% "spark-core" % "2.4.3" % Test classifier "tests",
+      "org.apache.spark" %% "spark-sql" % "2.4.3" % Test classifier "tests",
+      "org.apache.spark" %% "spark-hive" % "2.4.3" % Test classifier "tests",
+      "org.apache.spark" %% "spark-catalyst" % "2.4.3" % Test classifier "tests",
       //commented out the glue libs due to conflict between glue libs with spark libs.
       // There is a dedicated project AWSGlueProject to work with glue stuffs
       //"com.amazonaws" % "aws-java-sdk-glue" % "1.11.918"
@@ -100,36 +100,34 @@ lazy val mysqlSpark = (project in file("mysqlSpark"))
       //Deltalake operations
       "io.delta" %% "delta-core" % "0.6.1",
       //ZIO
-      "dev.zio" %% "zio" % "1.0.5",
-),
-dependencyOverrides ++= {
+      "dev.zio" %% "zio" % "2.0.0-RC2",
+      "dev.zio" %% "zio-test" % "2.0.0-RC2"
+    ),
+    dependencyOverrides ++= {
       Seq(
         "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.6.7.1",
-        "com.fasterxml.jackson.core"    % "jackson-databind"     % "2.6.7",
-        "com.fasterxml.jackson.core"    % "jackson-core"         % "2.6.7",
-
+        "com.fasterxml.jackson.core" % "jackson-databind" % "2.6.7",
+        "com.fasterxml.jackson.core" % "jackson-core" % "2.6.7",
         //THere are multiple version of hadoop libraries , overriding to version 2.6.5 to avoid conflicts
-        "org.apache.hadoop" % "hadoop-annotations"           % "2.6.5",
-        "org.apache.hadoop" % "hadoop-auth"                  % "2.6.5",
-        "org.apache.hadoop" % "hadoop-common"                % "2.6.5",
+        "org.apache.hadoop" % "hadoop-annotations" % "2.6.5",
+        "org.apache.hadoop" % "hadoop-auth" % "2.6.5",
+        "org.apache.hadoop" % "hadoop-common" % "2.6.5",
         "org.apache.hadoop" % "hadoop-mapreduce-client-core" % "2.6.5",
-
-        "org.scalatest"    %% "scalatest" % "3.0.5" % "test",
-  )
+        "org.scalatest" %% "scalatest" % "3.0.5" % "test"
+      )
     },
     //Excluding the slf4j logger from spark due to multiple slf4j logger library conflicts
     libraryDependencies ~= { _.map(_.exclude("org.apache.logging.log4j", "log4j-slf4j-impl")) }
   )
 
-/**
-Project 3. FPConcepts
-This project has my personal learings on various Funcitonal programming concepts like
-monads, monoids, Functors , Programming style using Tagless Final, etc.
- */
-val specs2Version = "4.9.4" // use the version used by discipline
-val specs2Core = "org.specs2"       %% "specs2-core"       % specs2Version
+/** Project 3. FPConcepts
+  * This project has my personal learings on various Funcitonal programming concepts like
+  * monads, monoids, Functors , Programming style using Tagless Final, etc.
+  */
+val specs2Version    = "4.9.4" // use the version used by discipline
+val specs2Core       = "org.specs2" %% "specs2-core" % specs2Version
 val specs2Scalacheck = "org.specs2" %% "specs2-scalacheck" % specs2Version
-val scalacheck = "org.scalacheck"   %% "scalacheck"        % "1.14.0"
+val scalacheck       = "org.scalacheck" %% "scalacheck" % "1.14.0"
 
 lazy val FPConcepts = (project in file("FPConcepts"))
   .
@@ -137,19 +135,19 @@ lazy val FPConcepts = (project in file("FPConcepts"))
   settings(
     organization := "com.home.projects",
     scalaVersion := "2.12.11",
-    name         := "FPConcepts",
+    name := "FPConcepts",
     libraryDependencies ++= Seq(
       //Libraries specific to cats
-      "org.scalatest"    % "scalatest_2.12" % "3.2.0-SNAP10",
-      "org.typelevel"   %% "cats-core"      % "2.1.1",
-      "org.typelevel"   %% "simulacrum"     % "1.0.0",
-      "org.scalamacros" %% "resetallattrs"  % "1.0.0",
+      "org.scalatest" % "scalatest_2.12" % "3.2.0-SNAP10",
+      "org.typelevel" %% "cats-core" % "2.1.1",
+      "org.typelevel" %% "simulacrum" % "1.0.0",
+      "org.scalamacros" %% "resetallattrs" % "1.0.0",
       //Libraries for parsing json and working with https requests
-      "io.spray"    %% "spray-json"   % "1.3.5",
-      "net.liftweb" %% "lift-json"    % "3.4.1",
-      "org.scalaj"  %% "scalaj-http"  % "2.3.0",
-      "com.lihaoyi" %% "upickle"      % "0.7.1",
-      "io.circe"    %% "circe-parser" % "0.14.0-M1",
+      "io.spray" %% "spray-json" % "1.3.5",
+      "net.liftweb" %% "lift-json" % "3.4.1",
+      "org.scalaj" %% "scalaj-http" % "2.3.0",
+      "com.lihaoyi" %% "upickle" % "0.7.1",
+      "io.circe" %% "circe-parser" % "0.14.0-M1",
       specs2Core,
       specs2Scalacheck,
       scalacheck,
@@ -178,28 +176,26 @@ lazy val FPConcepts = (project in file("FPConcepts"))
     addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.4")
   )
 
-/**
-Project 4. AWSProjects
-This project has the programs related to the working on the services in AWS such as
-Lambda, Glue, etc using Scala and Funcitonal Programming Style.
- */
-lazy val AWSProjects = (project in file("AWSProjects")).
-  settings(
-    organization    := "com.home.projects",
-    version         := "1.0",
-    scalaVersion    := "2.12.11",
-    retrieveManaged := true,
-    libraryDependencies ++= Seq(
-      "com.amazonaws" % "aws-lambda-java-core"   % "1.0.0",
-      "com.amazonaws" % "aws-lambda-java-events" % "1.0.0",
-      "com.amazonaws" % "aws-java-sdk-s3"        % "1.11.179"
-    ),
-    javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint"),
-    assemblyMergeStrategy in assembly := {
-      case PathList("META-INF", xs @ _*) => MergeStrategy.discard
-      case x                             => MergeStrategy.first
-    }
-  )
+/** Project 4. AWSProjects
+  * This project has the programs related to the working on the services in AWS such as
+  * Lambda, Glue, etc using Scala and Funcitonal Programming Style.
+  */
+lazy val AWSProjects = (project in file("AWSProjects")).settings(
+  organization := "com.home.projects",
+  version := "1.0",
+  scalaVersion := "2.12.11",
+  retrieveManaged := true,
+  libraryDependencies ++= Seq(
+    "com.amazonaws" % "aws-lambda-java-core" % "1.0.0",
+    "com.amazonaws" % "aws-lambda-java-events" % "1.0.0",
+    "com.amazonaws" % "aws-java-sdk-s3" % "1.11.179"
+  ),
+  javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint"),
+  assemblyMergeStrategy in assembly := {
+    case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+    case x => MergeStrategy.first
+  }
+)
 
 /*
 Project 5. Dotty Project
@@ -227,14 +223,13 @@ lazy val dotty = project
   )
  */
 
-/**
-Project 5: ZparkIO
-This project users spark on top of ZIO library
- */
+/** Project 5: ZparkIO
+  * This project users spark on top of ZIO library
+  */
 lazy val zparkIOSettings = Seq(
   organization := "com.home.zparkIO",
   scalaVersion := "2.12.12",
-  version      := "0.0.1"
+  version := "0.0.1"
 )
 
 lazy val zparkio = (project in file("zparkio"))
@@ -247,23 +242,22 @@ lazy val zparkio = (project in file("zparkio"))
       // https://mvnrepository.com/artifact/org.apache.spark/spark-sql
       "org.apache.spark" %% "spark-sql" % "2.4.3" % Provided,
       // https://github.com/leobenkel/ZparkIO
-      "com.leobenkel" %% "zparkio"                % "3.1.1_0.14.0",
+      "com.leobenkel" %% "zparkio" % "3.1.1_0.14.0",
       "com.leobenkel" %% "zparkio-config-scallop" % "3.1.1_0.14.0",
-      "com.leobenkel" %% "zparkio-test"           % "3.1.1_0.14.0" % Test,
+      "com.leobenkel" %% "zparkio-test" % "3.1.1_0.14.0" % Test,
       // https://www.scalatest.org/
       "org.scalatest" %% "scalatest" % "3.2.9" % Test
     )
   )
 
-/**
-Project 6: Streaming
-This project is to work on various streaming concepts - spark streaming,
- Kafka streaming, akka streams, etc
-*/
+/** Project 6: Streaming
+  * This project is to work on various streaming concepts - spark streaming,
+  * Kafka streaming, akka streams, etc
+  */
 lazy val streamingSettings = Seq(
   organization := "com.home.streaming",
   scalaVersion := "2.12.12",
-  version      := "0.0.1"
+  version := "0.0.1"
 )
 
 lazy val AkkaVersion = "2.6.17"
@@ -272,53 +266,48 @@ lazy val streaming = (project in file("streaming"))
   .settings(
     name := "Streaming",
     streamingSettings,
-      libraryDependencies ++= Seq(
-        // zio kafka
-        "dev.zio" %% "zio-kafka"   % "0.15.0",
-        "dev.zio" %% "zio-json"    % "0.1.5",
-
-        // spark streaming
-        "org.apache.spark" %% "spark-core"           % "2.4.3",
-        "org.apache.spark" %% "spark-sql"            % "2.4.3",
-        "org.apache.spark" %% "spark-streaming"            % "2.4.3",
-        "org.apache.spark" %% "spark-streaming-kafka-0-10" % "2.4.8" % Provided,
-        "org.apache.spark" %% "spark-sql-kafka-0-10" % "2.4.8" % Provided,
-
-        // akka streams
-        "com.typesafe.akka" %% "akka-stream" % AkkaVersion,
-        "com.typesafe.akka" %% "akka-actor-typed" % AkkaVersion,
-        "com.typesafe.akka" %% "akka-stream-testkit" % AkkaVersion % Test,
-
-        // Kafka streams
+    libraryDependencies ++= Seq(
+      // zio kafka
+      "dev.zio" %% "zio-kafka" % "0.15.0",
+      "dev.zio" %% "zio-json" % "0.1.5",
+      // spark streaming
+      "org.apache.spark" %% "spark-core" % "2.4.3",
+      "org.apache.spark" %% "spark-sql" % "2.4.3",
+      "org.apache.spark" %% "spark-streaming" % "2.4.3",
+      "org.apache.spark" %% "spark-streaming-kafka-0-10" % "2.4.8" % Provided,
+      "org.apache.spark" %% "spark-sql-kafka-0-10" % "2.4.8" % Provided,
+      // akka streams
+      "com.typesafe.akka" %% "akka-stream" % AkkaVersion,
+      "com.typesafe.akka" %% "akka-actor-typed" % AkkaVersion,
+      "com.typesafe.akka" %% "akka-stream-testkit" % AkkaVersion % Test,
+      // Kafka streams
 //        "org.apache.kafka" % "kafka-streams" % "2.7.0",
-        "org.apache.kafka" % "kafka-clients" % "2.7.0",
-        "org.apache.kafka" %% "kafka-streams-scala" % "2.7.0",
-
-        // Flink
-        "org.apache.flink" %% "flink-scala" % "1.14.0",
-        "org.apache.flink" %% "flink-streaming-scala" % "1.14.0" % Provided
-),
+      "org.apache.kafka" % "kafka-clients" % "2.7.0",
+      "org.apache.kafka" %% "kafka-streams-scala" % "2.7.0",
+      // Flink
+      "org.apache.flink" %% "flink-scala" % "1.14.0",
+      "org.apache.flink" %% "flink-streaming-scala" % "1.14.0" % Provided
+    ),
     dependencyOverrides ++= {
-      Seq("org.apache.kafka" % "kafka-clients" % "2.7.0",
-          "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.6.7.1",
-          "com.fasterxml.jackson.core"    % "jackson-databind"     % "2.6.7",
-          "com.fasterxml.jackson.core"    % "jackson-core"         % "2.6.7",
-        )
-      }
+      Seq(
+        "org.apache.kafka" % "kafka-clients" % "2.7.0",
+        "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.6.7.1",
+        "com.fasterxml.jackson.core" % "jackson-databind" % "2.6.7",
+        "com.fasterxml.jackson.core" % "jackson-core" % "2.6.7"
+      )
+    }
   )
 
-/**
-Project 7: akkaprogramming
-This project users spark on top of ZIO library
- */
+/** Project 7: akkaprogramming
+  * This project users spark on top of ZIO library
+  */
 lazy val AkkaVersion2 = "2.5.19"
 
 lazy val akkaSettings = Seq(
   organization := "com.home.streaming",
   scalaVersion := "2.12.12",
-  version      := "0.0.1"
+  version := "0.0.1"
 )
-
 
 lazy val akkaProgramming = (project in file("akkaProgramming"))
   .settings(
@@ -332,25 +321,24 @@ lazy val akkaProgramming = (project in file("akkaProgramming"))
     )
   )
 
-
-/**
-Project 8: ZIO2.0
-This project is to learn about the library zio and its features
-Its a place to practise some latest features released by zio and its concepts
-*/
+/** Project 8: ZIO2.0
+  * This project is to learn about the library zio and its features
+  * Its a place to practise some latest features released by zio and its concepts
+  */
 lazy val zioSettings = Seq(
   organization := "com.home.streaming",
   scalaVersion := "2.12.12",
-  version      := "0.0.1"
+  version := "0.0.1"
 )
 
 lazy val ZIO = (project in file("ZIO"))
+  .settings(commonSettings: _*)
   .settings(
     name := "ZIO",
     akkaSettings,
     libraryDependencies ++= Seq(
-      "dev.zio" %% "zio" % "2.0.0-M5",
-      "dev.zio" %% "zio-test" % "2.0.0-M5",
+      "dev.zio" %% "zio" % "2.0.0-RC2",
+      "dev.zio" %% "zio-test" % "2.0.0-RC2",
       "dev.zio" %% "zio-config" % "1.0.10"
     )
   )

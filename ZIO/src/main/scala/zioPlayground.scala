@@ -1,27 +1,34 @@
+
 import zio.ZIOAspect.debug.@@
 import zio._
 import zio.ZIOAspect._
 
 object anObject extends ZIOAppDefault {
-  val countErrors = ZIOMetric.countErrors("my service errors")
 
-  val aList = List(1,2,3)
+  /**
+    * ZIO 2.0 Service layer implementation
+    */
+  trait Print {
+    def print: ZIO[Any, Nothing, Unit]
+  }
 
-  def aFunction(list: List[Int]): ZIO[Has[Console], Throwable, Unit] =
-     ZIO.foreach(list) { elem =>
-       Console.printLine(s"Elements: ${elem}")
-     } *> ZIO.succeed()
+  object Print {
+    val live: ZLayer[Any, Nothing, Print] =
+      ZLayer.succeed(new Print {
+        override def print: ZIO[Any, Nothing, Unit] =
+          ZIO.succeed(println("Hello this is a print statement to check the zio functionality"))
+      })
+  }
 
-  val finalCode: ZIO[Any, Throwable, Unit] = aFunction(aList).inject(Console.live) @@ countErrors
+  val businessLogic: ZIO[Print, Nothing, Unit] =
+    for {
+    printService <- ZIO.service[Print]
+    printFiber <- printService.print.fork
+    _ <- printFiber.join
+  } yield ()
 
-  override def run: ZIO[ZEnv with Has[ZIOAppArgs], Any, Any] = finalCode.exitCode
+  val implWithLayer: ZIO[Any, Nothing, Unit] = businessLogic.provide(Print.live)
+
+  override def run: ZIO[ZEnv with ZIOAppArgs, Any, Any] = implWithLayer.exitCode
+
 }
-//object zioPlayground extends zio.ZIOApp {
-//  override implicit def tag: zio.Tag[zioPlayground.type] = ???
-//
-//  override type Environment = this.type
-//
-//  override def serviceBuilder: ZServiceBuilder[Has[ZIOAppArgs], Any, zioPlayground.type] = ???
-//
-//  override def run: ZIO[zioPlayground.type with ZEnv with Has[ZIOAppArgs], Any, Any] = ???
-//}

@@ -15,3 +15,6 @@ addSbtPlugin("org.lyranthe.sbt" % "partial-unification" % "1.1.2")
 
 //Plugin to run the gitter templates from SBT
 //addSbtPlugin("org.foundweekends.giter8" %% "sbt-giter8" % "0.11.0")
+
+//Plugin for scalafmt to format the scala files
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.3.2")
