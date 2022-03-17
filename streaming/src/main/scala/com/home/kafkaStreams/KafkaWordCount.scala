@@ -11,7 +11,7 @@ import org.apache.kafka.streams.scala.kstream._
 import org.apache.kafka.streams.scala.serialization.Serdes.{ longSerde, stringSerde }
 import org.apache.kafka.streams.{ KafkaStreams, StreamsConfig }
 
-object KafkaWorkCount extends App {
+object KafkaWordCount extends App {
 
   val props: Properties = {
     val p = new Properties()

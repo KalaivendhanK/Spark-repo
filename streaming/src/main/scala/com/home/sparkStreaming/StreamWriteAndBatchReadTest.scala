@@ -3,7 +3,7 @@ package com.home.sparkStreaming
 import org.apache.spark.sql.functions.col
 
 object StreamWriteAndBatchReadTest extends App with CommonSparkSession {
-  override val masterUrl: String = "local[4]"
+  override val masterUrl: String = "local[2]"
 
   import spark.implicits._
   case class WordCount(words: String, count: String)
