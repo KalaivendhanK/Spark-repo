@@ -6,7 +6,8 @@ import zio.{ZIO, ZLayer, _}
 
 import scala.concurrent.duration.DurationInt
 
-// TODO: Conver the below code into ZIO 2.0 programming style
+object DeltaLake
+// TODO: Convert the below code into ZIO 2.0 programming style
 /** object DeltaLake extends App {
   *
   * val PARQUET_PATH = "mysqlSpark/src/main/output/delta_tutorial/parquet_table"

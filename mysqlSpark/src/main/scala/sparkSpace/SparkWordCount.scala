@@ -1,6 +1,6 @@
 package sparkSpace
 
-import org.apache.spark.sql.{Row, SparkSession}
+import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.apache.spark.sql.functions.{col, count, explode, split}
 
 object SparkWordCount extends App {
@@ -9,9 +9,10 @@ object SparkWordCount extends App {
 
   import spark.implicits._
 
-  val input_file = spark.read
+  val input_file: DataFrame = spark.read
     .text(
-      "C:\\Kalai\\Learning\\Testing\\core-workspace\\mysqlSpark\\src\\main\\resources\\wordCount\\wordcount.txt")
+      "C:\\Kalai\\Learning\\Testing\\core-workspace\\mysqlSpark\\src\\main\\resources\\wordCount\\wordcount.txt"
+    )
     .cache()
 
   /** Below is the rdd implementation of flatmap.

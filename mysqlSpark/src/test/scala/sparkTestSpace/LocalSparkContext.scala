@@ -1,10 +1,10 @@
 package sparkTestSpace
 
 import org.apache.spark.sql.SparkSession
-import org.scalatest.{ BeforeAndAfterAll, BeforeAndAfterEach, Suite }
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Suite}
 
 /** Manages a local `sc` `SparkContext` variable, correctly stopping it after each test. */
-trait LocalSparkContext extends BeforeAndAfterEach with BeforeAndAfterAll { self: Suite =>
+trait LocalSparkContext extends BeforeAndAfterEach with BeforeAndAfterAll { self: Suite ⇒
 
   //  @transient var sc: SparkContext = _
   @transient var sparkSession: SparkSession = _

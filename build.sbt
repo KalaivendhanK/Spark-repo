@@ -101,8 +101,10 @@ lazy val mysqlSpark = (project in file("mysqlSpark"))
       "io.delta" %% "delta-core" % "0.6.1",
       //ZIO
       "dev.zio" %% "zio" % "2.0.0-RC2",
-      "dev.zio" %% "zio-test" % "2.0.0-RC2"
+      "dev.zio" %% "zio-test" % "2.0.0-RC2",
+      "dev.zio" %% "zio-test-sbt" % "2.0.0-RC2" % "test"
     ),
+    testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework"),
     dependencyOverrides ++= {
       Seq(
         "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.6.7.1",
